@@ -55,6 +55,7 @@ void AppClass::ProcessKeyboard(void)
 	ON_KEY_PRESS_RELEASE(F7, NULL, m_pPrimitive->GenerateTube(1.0f, 0.7f, 2.0f, 7, REYELLOW));
 	ON_KEY_PRESS_RELEASE(F8, NULL, m_pPrimitive->GenerateSphere(1.0f, 3, RERED));
 	ON_KEY_PRESS_RELEASE(F9, NULL, m_pPrimitive->GenerateCube(1.0f, REWHITE));
+	ON_KEY_PRESS_RELEASE(F10, NULL, m_pPrimitive->GeneratePlane(1.0f, REORANGE));
 
 	static bool bFPSControll = false;
 	ON_KEY_PRESS_RELEASE(F, bFPSControll = !bFPSControll, m_pCameraMngr->SetFPS(bFPSControll));
