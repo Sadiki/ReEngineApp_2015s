@@ -111,16 +111,21 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 	Init();
 
 	//Your code starts here
-	float fValue = 0.5f * a_fHeight;
+	float fValue = 0.5f;
 	//3--2
 	//|  |
 	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
 
-	AddQuad(point0, point1, point3, point2);
+	for (int i = 0; i <= a_nSubdivisions; i++) {
+
+
+		vector3 point0(0, a_fHeight/2, 0); // 0
+		vector3 point1(0, -a_fHeight / 2, 0); // 1
+		vector3 point2(a_fRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions)); //2
+		vector3 point3(a_fRadius * cos(i * (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fRadius * sin(i * (2 * PI) / a_nSubdivisions)); //3
+
+		AddQuad(point1, point2, point3, point0);
+	}
 
 	//Your code ends here
 	CompileObject(a_v3Color);
@@ -140,12 +145,22 @@ void MyPrimitive::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubd
 	//3--2
 	//|  |
 	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+	for (int i = 0; i <= a_nSubdivisions; i++) {
 
-	AddQuad(point0, point1, point3, point2);
+		vector3 point0(0, -a_fHeight / 2, 0); // 0
+		
+		vector3 point1(a_fRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), -a_fHeight/2, a_fRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions)); //1
+		vector3 point2(a_fRadius * cos(i * (2 * PI) / a_nSubdivisions), a_fHeight/2, a_fRadius * sin(i * (2 * PI) / a_nSubdivisions)); //2
+		vector3 point3(a_fRadius * cos(i * (2 * PI) / a_nSubdivisions), -a_fHeight/2, a_fRadius * sin(i* (2 * PI) / a_nSubdivisions)); //3
+		vector3 point4(a_fRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), a_fHeight/2, a_fRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions)); //4
+		
+		vector3 point5(0, a_fHeight/2, 0); // 5
+
+		AddQuad(point0, point1, point3, point2);
+		AddQuad(point1, point4, point2, point5);
+	}
+
+
 
 	//Your code ends here
 	CompileObject(a_v3Color);
@@ -165,13 +180,31 @@ void MyPrimitive::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float
 	//3--2
 	//|  |
 	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
 
-	AddQuad(point0, point1, point3, point2);
+	for (int i = 0; i <= a_nSubdivisions; i++) {
+		/*Inner*/
+		//Top
+		vector3 point0(a_fInnerRadius * cos(i * (2 * PI) / a_nSubdivisions), a_fHeight / 2, a_fInnerRadius * sin((i)* (2 * PI) / a_nSubdivisions));
+		vector3 point1(a_fInnerRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), a_fHeight / 2, a_fInnerRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions));
 
+		//Bottom
+		vector3 point2(a_fInnerRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fInnerRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions));
+		vector3 point3(a_fInnerRadius * cos(i * (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fInnerRadius * sin(i * (2 * PI) / a_nSubdivisions));
+
+		/*Outter*/
+		// Top
+		vector3 point4(a_fOuterRadius * cos(i * (2 * PI) / a_nSubdivisions), a_fHeight/2, a_fOuterRadius * sin((i)* (2 * PI) / a_nSubdivisions));
+		vector3 point5(a_fOuterRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), a_fHeight/2, a_fOuterRadius * sin((i - 1) * (2 * PI) / a_nSubdivisions));
+		//Bottom
+		vector3 point6(a_fOuterRadius * cos(i * (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fOuterRadius  * sin(i * (2 * PI) / a_nSubdivisions));
+		vector3 point7(a_fOuterRadius * cos((i - 1)* (2 * PI) / a_nSubdivisions), -a_fHeight / 2, a_fOuterRadius *  sin((i - 1) * (2 * PI) / a_nSubdivisions));
+		
+		AddQuad(point3, point2, point6, point7);
+		AddQuad(point6, point7, point4, point5);
+		AddQuad(point1, point0, point5, point4);
+		AddQuad(point4, point5, point3, point2);
+		
+	}
 	//Your code ends here
 	CompileObject(a_v3Color);
 }

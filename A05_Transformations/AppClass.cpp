@@ -46,14 +46,20 @@ void AppClass::Update(void)
 	//This matrices will hold the relative transformation of the Moon and the Earth
 	matrix4 distanceEarth = glm::translate(11.0f, 0.0f, 0.0f);
 	matrix4 distanceMoon = glm::translate(2.0f, 0.0f, 0.0f);
+
 #pragma endregion
 
 #pragma region YOUR CODE GOES HERE
+
+
 	//Calculate the position of the Earth
-	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
+	matrix4 size = glm::scale(vector3(1.5f, 1.5f, 1.5f));
+	m_m4Earth =  glm::rotate(m_m4Sun, m_fEarthTimer * 1.05f, vector3(0.0f, 1.0f, 0.0f)) * distanceEarth * rotateX * glm::rotate(IDENTITY_M4, m_fEarthTimer * 45, vector3(0.0f, 0.0f, -1.0f)) * size;
+
 
 	//Calculate the position of the Moon
-	m_m4Moon = glm::rotate(IDENTITY_M4, m_fMoonTimer, vector3(0.0f, 1.0f, 0.0f));
+	m_m4Moon = glm::rotate(m_m4Earth, m_fMoonTimer * 2.6f, vector3(0.0f, 0.0f, 1.0f)) * distanceMoon * rotateY * rotateX;
+
 #pragma endregion
 
 #pragma region Print info
@@ -98,7 +104,7 @@ void AppClass::Display(void)
 	}
 
 	//Renders the meshes using the specified position given by the matrix and in the specified color
-	m_pSun->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Sun);
+	//m_pSun->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Sun);
 	m_pEarth->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Earth);
 	m_pMoon->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Moon);
 	
