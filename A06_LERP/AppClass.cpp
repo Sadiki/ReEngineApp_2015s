@@ -1,4 +1,5 @@
 #include "AppClass.h"
+
 void AppClass::InitWindow(String a_sWindowName)
 {
 	super::InitWindow("Assignment  06 - LERP"); // Window Name
@@ -14,6 +15,29 @@ void AppClass::InitVariables(void)
 	m_pMeshMngr->LoadModel("Sorted\\WallEye.bto", "WallEye");
 
 	fDuration = 1.0f;
+
+	// Store locations
+	locationList.push_back(vector3(-4.0f, -2.0f, 5.0f));
+	locationList.push_back(vector3(1.0f, -2.0f, 5.0f));
+	locationList.push_back(vector3(-3.0f, -1.0f, 3.0f));
+	locationList.push_back(vector3(2.0f, -1.0f, 3.0f));
+	locationList.push_back(vector3(-2.0f, 0.0f, 0.0f));
+	locationList.push_back(vector3(3.0f, 0.0f, 0.0f));
+	locationList.push_back(vector3(-1.0f, 1.0f, -3.0f));
+	locationList.push_back(vector3(4.0f, 1.0f, -3.0f));
+	locationList.push_back(vector3(0.0f, 2.0f, -5.0f));
+	locationList.push_back(vector3(5.0f, 2.0f, -5.0f));
+	locationList.push_back(vector3(1.0f, 3.0f, -5.0f));
+
+	// Initialize a sphere and sphere's matrix
+	m_pSphere = new PrimitiveClass();
+	m_m4Sphere = IDENTITY_M4;
+
+	// Intialize the model matrix
+	m_m4Model = IDENTITY_M4;
+
+	// Create the sphere
+	m_pSphere->GenerateSphere(0.1f, 5, RERED);
 }
 
 void AppClass::Update(void)
@@ -32,11 +56,32 @@ void AppClass::Update(void)
 
 	//cumulative time
 	static double fRunTime = 0.0f; //How much time has passed since the program started
-	fRunTime += fTimeSpan; 
+	fRunTime += fTimeSpan;
 #pragma endregion
 
 #pragma region Your Code goes here
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
+
+
+		// Loop through the locations
+		for (int i = 0; i < locationList.size(); i++) {
+				float fPercent = MapValue(static_cast<float>(fTimeSpan), 0.0f, fDuration, 0.0f, 1.0f);
+				if(i + 1 < locationList.size() - 1){
+					vector3 fPostion = glm::lerp(locationList[i], locationList[i + 1], fPercent);
+					m_m4Model = glm::translate(fPostion);
+					m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+				}
+				else {
+					vector3 fPostion = glm::lerp(locationList[i], locationList[0], fPercent);
+					m_m4Model = glm::translate(fPostion);
+					m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+					
+				}
+				
+		
+			
+		}
+
+
 #pragma endregion
 
 #pragma region Does not need changes but feel free to change anything here
@@ -76,6 +121,10 @@ void AppClass::Display(void)
 	}
 	
 	m_pMeshMngr->Render(); //renders the render list
+	for (unsigned int i = 0; i < locationList.size(); i++) {
+		m_m4Sphere = glm::translate(locationList[i]);
+		m_pSphere->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Sphere);
+	}
 
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }

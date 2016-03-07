@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("Example"); // Window Name
+	super::InitWindow("Solomon (sxs6590) - E06_Lerp"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -13,7 +13,7 @@ void AppClass::InitVariables(void)
 {
 	m_selection = std::pair<int, int>(-1, -1);
 	//Set the camera at a position other than the default
-	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 2.5f, 12.0f), vector3(0.0f, 2.5f, 11.0f), REAXISY);
+	/*m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 2.5f, 12.0f), vector3(0.0f, 2.5f, 11.0f), REAXISY);
 
 	m_pLightMngr->SetColor(REWHITE, 0);
 	m_pLightMngr->SetIntensity(0.1f, 0);
@@ -37,6 +37,28 @@ void AppClass::InitVariables(void)
 		}
 		v3Start += vector3(1.0f, 0.0f, 1.0f);
 	}
+
+	*/
+	// Set new camera position
+	m_pCameraMngr->SetPosition(vector3(0.0f, 0.0f, 35.0f));
+
+	srand(time(NULL));
+	m_nObjects = rand() % 23 + 5;
+
+	vector3 v3Start = vector3(-m_nObjects, 0.0f, 0.0f);
+	vector3 v3End = vector3(m_nObjects, 0.0f, 0.0f);
+
+	// Inialize the m_pSphere and m_pMatrix variables to the object size
+	m_pSphere = new PrimitiveClass[m_nObjects];
+	m_pMatrix = new matrix4[m_nObjects];
+
+	for (int i = 0; i < m_nObjects; i++) {
+		float fPercent = MapValue(static_cast<float>(i), 0.0f, static_cast<float>(m_nObjects) , 0.0f, 1.0f);
+		m_pSphere[i].GenerateSphere(1, 5, vector3(fPercent, 0.0f, 0.0f));
+
+		m_pMatrix[i] = glm::translate(glm::lerp(v3Start, v3End, fPercent));
+	}
+
 }
 
 void AppClass::Update(void)
@@ -93,8 +115,13 @@ void AppClass::Display(void)
 		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY, REBLUE * 0.75f); //renders the XY grid with a 100% scale
 		break;
 	}
-	
+
 	m_pMeshMngr->Render(); //renders the render list
+
+	// Render all spheres
+	for (int i = 0; i < m_nObjects; i++) {
+		m_pSphere[i].Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_pMatrix[i]);
+	}
 
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
@@ -102,4 +129,7 @@ void AppClass::Display(void)
 void AppClass::Release(void)
 {
 	super::Release(); //release the memory of the inherited fields
+	// Delete sphere and matrix memory allocation.
+	delete[] m_pSphere;
+	delete[] m_pMatrix;
 }

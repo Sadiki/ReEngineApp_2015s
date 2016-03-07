@@ -8,11 +8,18 @@ Date: 2015/09
 #include "RE\ReEngAppClass.h"
 #include <SFML\Graphics.hpp>
 
+#include <vector>
+using namespace std;
+
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
 class AppClass : public ReEngAppClass
 {
 	float fDuration = 1.0f; //Time Duration of the stops
+	PrimitiveClass* m_pSphere; // Primitive for sphere
+	vector<vector3> locationList;  // vector to store the locations
+	matrix4 m_m4Sphere; // matrix4 for sphere.
+	matrix4 m_m4Model; // matrix4 for model.
 public:
 	typedef ReEngAppClass super;
 	/*
