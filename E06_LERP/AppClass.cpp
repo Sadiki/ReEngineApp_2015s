@@ -42,7 +42,7 @@ void AppClass::InitVariables(void)
 	// Set new camera position
 	m_pCameraMngr->SetPosition(vector3(0.0f, 0.0f, 35.0f));
 
-	srand(time(NULL));
+	srand((unsigned) time(NULL));
 	m_nObjects = rand() % 23 + 5;
 
 	vector3 v3Start = vector3(-m_nObjects, 0.0f, 0.0f);
@@ -52,8 +52,8 @@ void AppClass::InitVariables(void)
 	m_pSphere = new PrimitiveClass[m_nObjects];
 	m_pMatrix = new matrix4[m_nObjects];
 
-	for (int i = 0; i < m_nObjects; i++) {
-		float fPercent = MapValue(static_cast<float>(i), 0.0f, static_cast<float>(m_nObjects) , 0.0f, 1.0f);
+	for (signed int i = 0; i < m_nObjects; i++) {
+		float fPercent = MapValue(static_cast<float>(i), 0.0f, static_cast<float>(m_nObjects) - 1 , 0.0f, 1.0f);
 		m_pSphere[i].GenerateSphere(1, 5, vector3(fPercent, 0.0f, 0.0f));
 
 		m_pMatrix[i] = glm::translate(glm::lerp(v3Start, v3End, fPercent));
@@ -119,7 +119,7 @@ void AppClass::Display(void)
 	m_pMeshMngr->Render(); //renders the render list
 
 	// Render all spheres
-	for (int i = 0; i < m_nObjects; i++) {
+	for (signed int i = 0; i < m_nObjects; i++) {
 		m_pSphere[i].Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_pMatrix[i]);
 	}
 
@@ -130,6 +130,12 @@ void AppClass::Release(void)
 {
 	super::Release(); //release the memory of the inherited fields
 	// Delete sphere and matrix memory allocation.
-	delete[] m_pSphere;
-	delete[] m_pMatrix;
+	if (m_pSphere != nullptr) {
+		delete[] m_pSphere;
+		m_pSphere = nullptr;
+	}
+	if (m_pMatrix != nullptr) {
+		delete[] m_pMatrix;
+		m_pSphere = nullptr;
+	}
 }
