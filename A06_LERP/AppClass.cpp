@@ -61,25 +61,36 @@ void AppClass::Update(void)
 
 #pragma region Your Code goes here
 
-
+	static int counter = 0;
 		// Loop through the locations
-		for (int i = 0; i < locationList.size(); i++) {
-				float fPercent = MapValue(static_cast<float>(fTimeSpan), 0.0f, fDuration, 0.0f, 1.0f);
-				if(i + 1 < locationList.size() - 1){
-					vector3 fPostion = glm::lerp(locationList[i], locationList[i + 1], fPercent);
-					m_m4Model = glm::translate(fPostion);
-					m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+		//for (int i = 0; i < locationList.size(); i++) {
+				
+	
+				if(counter + 1 < locationList.size()){
+					if (fRunTime >= fDuration) {
+
+						float fPercent = MapValue(static_cast<float>(0), 0.0f, fDuration, 0.0f, 1.0f);
+						vector3 fPostion = glm::lerp(locationList[counter], locationList[counter + 1], fPercent);
+						m_m4Model = glm::translate(fPostion);
+						m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+						counter++;
+						fRunTime = 0;
+					}
 				}
 				else {
-					vector3 fPostion = glm::lerp(locationList[i], locationList[0], fPercent);
-					m_m4Model = glm::translate(fPostion);
-					m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
-					
+					if (fRunTime >= fDuration) {
+
+
+						float fPercent = MapValue(static_cast<float>(0), 0.0f, fDuration, 0.0f, 1.0f);
+						vector3 fPostion = glm::lerp(locationList[counter], locationList[0], fPercent);
+						m_m4Model = glm::translate(fPostion);
+						m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+						counter = 0;
+						fRunTime = 0;
+					}
 				}
-				
-		
 			
-		}
+		//}
 
 
 #pragma endregion
