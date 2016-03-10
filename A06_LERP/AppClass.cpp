@@ -61,38 +61,39 @@ void AppClass::Update(void)
 
 #pragma region Your Code goes here
 
+	// Create a static counter. Only instantiates once.
 	static int counter = 0;
-		// Loop through the locations
-		//for (int i = 0; i < locationList.size(); i++) {
-				
-	
-				if(counter + 1 < locationList.size()){
-					if (fRunTime >= fDuration) {
-
-						float fPercent = MapValue(static_cast<float>(0), 0.0f, fDuration, 0.0f, 1.0f);
-						vector3 fPostion = glm::lerp(locationList[counter], locationList[counter + 1], fPercent);
-						m_m4Model = glm::translate(fPostion);
-						m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
-						counter++;
-						fRunTime = 0;
-					}
+	// Check if counter is greater than the size of the location
+		if(counter + 1 < locationList.size()){
+			// Map the system run time to the duration.
+			float fPercent = MapValue(static_cast<float>(fRunTime), 0.0f, fDuration, 0.0f, 1.0f);
+			// Use lerp to get the vector between the set points.
+			vector3 fPostion = glm::lerp(locationList[counter], locationList[counter + 1], fPercent);
+			// Move the model based on that vector.
+			m_m4Model = glm::translate(fPostion);
+			// Set the model's matrix.
+			m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+			// If the runtime equals the duration then the runtime is set back to 0 and the next set of points is moved onto.
+			if (fRunTime >= fDuration) {
+				fRunTime = 0.0f;
+				counter++;
 				}
-				else {
+			}
+			else {	
+				// Map the system run time to the duration.
+					float fPercent = MapValue(static_cast<float>(fRunTime), 0.0f, fDuration, 0.0f, 1.0f);
+					// Use lerp to get the vector between the last point and the first.
+					vector3 fPostion = glm::lerp(locationList[counter], locationList[0], fPercent);
+					// Move the model based on that vector.
+					m_m4Model = glm::translate(fPostion);
+					// Set the model's matrix.
+					m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
+					// If the runtime equals the duration then the runtime is set back to 0 and the next set of points is put back to start.
 					if (fRunTime >= fDuration) {
-
-
-						float fPercent = MapValue(static_cast<float>(0), 0.0f, fDuration, 0.0f, 1.0f);
-						vector3 fPostion = glm::lerp(locationList[counter], locationList[0], fPercent);
-						m_m4Model = glm::translate(fPostion);
-						m_pMeshMngr->SetModelMatrix(m_m4Model, "WallEye");
 						counter = 0;
 						fRunTime = 0;
 					}
 				}
-			
-		//}
-
-
 #pragma endregion
 
 #pragma region Does not need changes but feel free to change anything here
@@ -105,7 +106,13 @@ void AppClass::Update(void)
 	//Print info on the screen
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 	m_pMeshMngr->Print("FPS:");
-	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+	m_pMeshMngr->Print("fTimeSpan:");
+	m_pMeshMngr->PrintLine(std::to_string(fTimeSpan), REYELLOW);
+	m_pMeshMngr->Print("fRunTime:");
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime), REYELLOW);
+	m_pMeshMngr->Print("fDuration:");
+	m_pMeshMngr->PrintLine(std::to_string(fDuration), REYELLOW);
 #pragma endregion
 }
 
@@ -132,7 +139,10 @@ void AppClass::Display(void)
 	}
 	
 	m_pMeshMngr->Render(); //renders the render list
+
+	// Loop through the locations
 	for (unsigned int i = 0; i < locationList.size(); i++) {
+		// Move and render spheres based on location.
 		m_m4Sphere = glm::translate(locationList[i]);
 		m_pSphere->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Sphere);
 	}
