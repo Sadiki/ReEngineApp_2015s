@@ -28,14 +28,18 @@ void AppClass::InitVariables(void)
 void AppClass::Update(void)
 {
 
+	static int nEarthOrbits = 0;
+	static int nEarthRevolutions = 0;
+	static int nMoonOrbits = 0;
+
 	// Create size for Sun, Earth, and Moon
-	vector3 v3_sunSize(5.936, 5.936, 5.936);
+	matrix4 m4_sunSize = glm::scale(5.936f, 5.936f, 5.936f);
 	matrix4 m4_earthSize = glm::scale(0.524f, 0.524f, 0.524f);
-	vector3 v3_moonSize(0.27, 0.27, 0.27);
+	matrix4 m4_moonSize = glm::scale(0.27f, 0.27f, 0.27f);
 
 	// Create distance from origin for Earth, and Moon
 	matrix4 m4_earthDist = glm::translate(11.0f, 0.0f, 0.0f);
-	vector3 v3_moonDist(2.0f, 0.0f, 0.0f);
+	matrix4 m4_moonDist = glm::translate(2.0f, 0.0f, 0.0f);
 	
 	//Update the system's time
 	m_pSystem->UpdateTime();
@@ -53,18 +57,28 @@ void AppClass::Update(void)
 	static double fRunTime = 0.0f;
 	fRunTime += fCallTime;
 
-	static double fRotationTime = 0.0f;
-	fRotationTime += fCallTime;
+	static double fEarthRotationTime = 0.0f;
+	fEarthRotationTime += fCallTime;
+
+	static double fMoonRotationTime = 0.0f;
+	fMoonRotationTime += fCallTime;
 
 	//Earth Orbit
 	double fEarthHalfOrbTime = 182.5f * m_fDay; //Earths orbit around the sun lasts 365 days / half the time for 2 stops
 	float fEarthHalfRevTime = 0.5f * m_fDay; // Move for Half a day
 	float fMoonHalfOrbTime = 14.0f * m_fDay; //Moon's orbit is 28 earth days, so half the time for half a route
 
-	float fPercent = MapValue(static_cast<float>(fRunTime), 0.0f, static_cast<float>(fEarthHalfOrbTime), 0.0f, 1.0f);
+	float fEarthPercent = MapValue(static_cast<float>(fRunTime), 0.0f, 365.0f, 0.0f, 1.0f);
+	float fMoonPercent = MapValue(static_cast<float>(fRunTime), 0.0f, 28.0f, 0.0f, 1.0f);
 
-	if (fRunTime >= fEarthHalfOrbTime) {
-		fEarthHalfOrbTime *= 2;
+	if (fEarthRotationTime >= 365.0f ) {
+		fEarthRotationTime = 0.0f;
+		nEarthOrbits++;
+	}
+
+	if (fMoonRotationTime >= 28.0f) {
+		fMoonRotationTime = 0.0f;
+		nMoonOrbits++;
 	}
 
 
@@ -73,14 +87,20 @@ void AppClass::Update(void)
 	//glm::quat earthQuat = glm::quat_cast(earthRot);
 
 	// do slerp between the earth's roation and the last point
-	double earthFinalQuat = glm::mix(glm::quat(vector3(0.0f, 0.0f, 0.0f)), glm::quat(vector3(0.0f, 720.0f, 0.0f)), fPercent).y;
+	double earthFinalQuat = glm::mix(glm::quat(vector3(0.0f, 0.0f, 0.0f)), glm::quat(vector3(0.0f, 720.0f, 0.0f)), fEarthPercent).y;
 
-	float testVar = glm::degrees(static_cast<float>(earthFinalQuat));
+	double moonFinalQuat = glm::mix(glm::quat(vector3(0.0f, 0.0f, 0.0f)), glm::quat(vector3(0.0f, 720.0f, 0.0f)), fEarthPercent).y;
+
 	//matrix4  earthMat4 = glm::mat4_cast(earthFinalQuat);
-	matrix4 earthRot = glm::rotate(IDENTITY_M4, glm::degrees(static_cast<float>(earthFinalQuat)), vector3(0.0f, 1.0f, 0.0f));
 
-	m4_Earth = earthRot * m4_earthSize * m4_earthDist;
-	
+//	m4_Sun = IDENTITY_M4 * m4_sunSize;
+
+	matrix4 earthRot = glm::rotate(m4_Sun, glm::degrees(static_cast<float>(earthFinalQuat)), vector3(0.0f, 1.0f, 0.0f));
+
+	m4_Earth = earthRot * m4_earthDist * m4_earthSize ;
+
+	matrix4 moonRot = glm::rotate(m4_Earth, glm::degrees(static_cast<float>(moonFinalQuat)), vector3(0.0f, 1.0f, 0.0f));
+	m4_Moon = moonRot  * m4_moonDist * m4_moonSize;
 
 	//Setting the matrices
 	m_pMeshMngr->SetModelMatrix(m4_Sun, "Sun");
@@ -90,9 +110,7 @@ void AppClass::Update(void)
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
 
-	static int nEarthOrbits = 0;
-	static int nEarthRevolutions = 0;
-	static int nMoonOrbits = 0;
+
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
@@ -101,13 +119,13 @@ void AppClass::Update(void)
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 	
 	m_pMeshMngr->Print("Time:");
-	m_pMeshMngr->PrintLine(std::to_string(earthFinalQuat));
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime));
 
 	m_pMeshMngr->Print("Day:");
-	m_pMeshMngr->PrintLine(std::to_string(fPercent));
+	m_pMeshMngr->PrintLine(std::to_string(m_fDay));
 
 	m_pMeshMngr->Print("E_Orbits:");
-	m_pMeshMngr->PrintLine(std::to_string(testVar));
+	m_pMeshMngr->PrintLine(std::to_string(nEarthOrbits));
 
 	m_pMeshMngr->Print("E_Revolutions:");
 	m_pMeshMngr->PrintLine(std::to_string(nEarthRevolutions));
