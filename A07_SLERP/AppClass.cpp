@@ -93,9 +93,9 @@ void AppClass::Update(void)
 
 	//matrix4  earthMat4 = glm::mat4_cast(earthFinalQuat);
 
-//	m4_Sun = IDENTITY_M4 * m4_sunSize;
+    m4_Sun = m4_sunSize;
 
-	matrix4 earthRot = glm::rotate(m4_Sun, glm::degrees(static_cast<float>(earthFinalQuat)), vector3(0.0f, 1.0f, 0.0f));
+	matrix4 earthRot = glm::rotate(IDENTITY_M4, glm::degrees(static_cast<float>(earthFinalQuat)), vector3(0.0f, 1.0f, 0.0f));
 
 	m4_Earth = earthRot * m4_earthDist * m4_earthSize ;
 

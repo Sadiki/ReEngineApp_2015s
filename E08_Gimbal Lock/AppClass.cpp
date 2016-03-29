@@ -11,6 +11,14 @@ void AppClass::InitVariables(void)
 
 	//Set the axis of Steve visible
 	m_pMeshMngr->SetVisibleAxis(true, "Steve");
+
+
+	//glm::quat rotX = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.x, REAXISX));
+	//glm::quat rotY = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.y, REAXISY));
+	//glm::quat rotZ = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.z, REAXISZ));
+
+	//quaternion()
+	//quat_mToWorld = rotX * rotY * rotZ;
 }
 
 void AppClass::Update(void)
@@ -25,13 +33,11 @@ void AppClass::Update(void)
 	if (m_bFPC == true)
 		CameraRotation();
 
-	//Rotation matrices
-	matrix4 rotX = glm::rotate(IDENTITY_M4, m_v3Orientation.x, REAXISX);
-	matrix4 rotY = glm::rotate(IDENTITY_M4, m_v3Orientation.y, REAXISY);
-	matrix4 rotZ = glm::rotate(IDENTITY_M4, m_v3Orientation.z, REAXISZ);
 
-	//linear combination
-	m_mToWorld = rotX * rotY * rotZ;
+	// Set the orientation to the quat orientation. (Created in Appclasscontrols)
+	m_mToWorld = glm::mat4_cast(quat_mToWorld);
+	
+	
 
 	//Setting the model matrix
 	m_pMeshMngr->SetModelMatrix(m_mToWorld, "Steve");

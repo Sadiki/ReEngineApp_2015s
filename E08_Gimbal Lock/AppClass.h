@@ -20,6 +20,11 @@ public:
 
 	vector3 m_v3Orientation;
 
+	glm::quat quat_mToWorld;
+	glm::quat rotX;
+	glm::quat rotY;
+	glm::quat rotZ;
+
 	/* Constructor */
 	AppClass(HINSTANCE hInstance, LPWSTR lpCmdLine, int nCmdShow) : super(hInstance, lpCmdLine, nCmdShow) {}
 
