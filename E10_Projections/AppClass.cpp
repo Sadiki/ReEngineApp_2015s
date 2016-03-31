@@ -14,8 +14,17 @@ void AppClass::InitVariables(void)
 	m_pCylinder->GenerateCylinder(1.0f, 1.0f, 10, REGREEN);
 
 	//Calculate the first projections
-	m_m4Projection = glm::perspective(45.0f, 1080.0f / 768.0f, 0.01f, 1000.0f);
-	m_m4View = glm::lookAt(glm::vec3(0.0f, 0.0f, 15.0f), glm::vec3(0.0f, 0.0f, 14.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	m_m4Projection = glm::perspective(
+		45.0f, // Camera viewing angle
+		1080.0f / 768.0f, // Camera viewing ratio
+		0.01f,
+		1000.0f);
+
+	m_m4View = glm::lookAt(
+		glm::vec3(0.0f, 0.0f, 15.0f), // Position
+		glm::vec3(0.0f, 0.0f, 14.0f), // What i'm looking at
+		glm::vec3(0.0f, 1.0f, 0.0f)); // rotation orientation - currently up
+	
 }
 
 void AppClass::Update(void)
@@ -28,6 +37,30 @@ void AppClass::Update(void)
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
+/*
+	m_m4Projection = glm::perspective(
+		45.0f, // Camera viewing angle
+		1080.0f / 768.0f, // Camera viewing ratio
+		0.01f,
+		1000.0f);
+		*/
+
+	/*glm::ortho(
+		-20.0f,//left 
+		20.0f,//right 
+		-10.0f,//bottom
+		10.0f,///top
+		0.01f,//near, 
+		1000.0f);//far);
+		*/
+		
+		
+	/*
+	m_m4View = glm::lookAt(
+		glm::vec3(0.0f, 0.0f, 15.0f), // Position
+		glm::vec3(0.0f, 0.0f, 14.0f), // What i'm looking at
+		glm::vec3(0.0f, 1.0f, 0.0f)); // rotation orientation - currently up
+	*/
 }
 
 void AppClass::Display(void)
