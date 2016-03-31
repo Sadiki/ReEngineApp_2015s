@@ -24,22 +24,50 @@ void AppClass::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
 		m_v3Orientation = vector3(0.0f);
+		quat_mToWorld = quaternion(m_v3Orientation);
+		rotX.x = 0;
+		rotY.y = 0;
+		rotZ.z = 0;
+		
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
 		if (!bModifier) m_v3Orientation.x += 1.0f;
 		else m_v3Orientation.x -= 1.0f;
+	
+	 // When x is pressed. It creates a quat that rotates around the x axis
+	 rotX = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.x, REAXISX));
+
+	 // Multiply x by the original quat and set it back to itself.
+	quat_mToWorld = quat_mToWorld * rotX ;
+	
+
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
 	{
 		if (!bModifier) m_v3Orientation.y += 1.0f;
 		else m_v3Orientation.y -= 1.0f;
+
+		// When y is pressed. It creates a quat that rotates around the y axis
+		rotY = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.y, REAXISY));
+		
+		// Multiply y by the original quat and set it back to itself.
+		quat_mToWorld = quat_mToWorld * rotY;
+
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		if (!bModifier) m_v3Orientation.z += 1.0f;
 		else m_v3Orientation.z -= 1.0f;
+
+
+		// When z is pressed. It creates a quat that rotates around the z axis
+		rotZ = quaternion(glm::rotate(IDENTITY_M4, m_v3Orientation.z, REAXISZ));
+
+		// Multiply z by the original quat and set it back to itself.
+		quat_mToWorld = quat_mToWorld * rotZ ;
+	
 	}
 
 #pragma region Camera Positioning
