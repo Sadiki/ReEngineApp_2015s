@@ -27,6 +27,7 @@ void AppClass::ProcessKeyboard(void)
 	//F2 Controllers
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
 	{
+<<<<<<< HEAD
 
 		m_m4Projection = glm::perspective(
 			45.0f, // Camera viewing angle
@@ -39,6 +40,9 @@ void AppClass::ProcessKeyboard(void)
 			glm::vec3(30.0f, 0.0f, 15.0f), // Position
 			glm::vec3(0.0f, 0.0f, 0.0f), // What i'm looking at
 			glm::vec3(-1.0f, 0.0f, 0.0f)); // rotation orientation - currently up
+=======
+		m_fTemp += 0.1f;
+>>>>>>> 31d1d82aa61d5f53c28e2bdab18374f5dd8780cc
 	}
 
 	//F3 Controllers
