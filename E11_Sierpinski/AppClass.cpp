@@ -48,7 +48,7 @@ void AppClass::Update(void)
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
 	//print info into the console
-	printf("FPS: %d            \r", nFPS);//print the Frames per Second
+	printf("FPS: %d   \r", nFPS);//print the Frames per Second
 										  //Print info on the screen
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 	m_pMeshMngr->Print("FPS:");
@@ -62,6 +62,16 @@ void AppClass::Update(void)
 		const float* m4MVP = glm::value_ptr(glm::translate(vector3(n * 2, 0, 0)));
 		memcpy(&m_fMatrixArray[n * 16], m4MVP, 16 * sizeof(float));
 	}
+
+	
+}
+
+int factorial(int num) {
+	if (num <= 1) {
+		return 1;
+	}
+	
+	return num * factorial(num - 1);
 }
 
 void AppClass::Display(void)
