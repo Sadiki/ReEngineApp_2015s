@@ -8,6 +8,7 @@ Date: 2015/09
 #include "RE\ReEngAppClass.h"
 #include <SFML\Graphics.hpp>
 #include "MyBoundingSphereClass.h"
+#include "MyBoundingCubeClass.h"
 
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
@@ -27,6 +28,9 @@ class AppClass : public ReEngAppClass
 	matrix4 m_m4Creeper;
 	MyBoundingSphereClass* steveBO;
 	MyBoundingSphereClass* creeperBO;
+
+	MyBoundingCubeClass* m_pBox1;
+	MyBoundingCubeClass* m_pBox2;
 
 public:
 	typedef ReEngAppClass super;
