@@ -14,14 +14,15 @@ void AppClass::InitVariables(void)
 	//Initialize positions
 	m_v3O1 = vector3(-2.5f, 0.0f, 0.0f);
 	m_v3O2 = vector3(2.5f, 0.0f, 0.0f);
+	
 
 	//Load Models
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
 	m_pMeshMngr->LoadModel("Minecraft\\Creeper.obj", "Creeper");
 
 
-	steveBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Steve"));
-	creeperBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Creeper"));
+	//steveBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Steve"));
+	//creeperBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Creeper"));
 
 
 	m_pBox1 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Steve"));
@@ -44,13 +45,13 @@ void AppClass::Update(void)
 	ArcBall();
 	
 
-	steveBO->UpdatePosition(m_v3O1);
-	steveBO->SetModelMatrix(glm::translate(m_v3O1)* glm::translate(0.0f, 1.0f, 0.0f) * ToMatrix4(m_qArcBall));
-	creeperBO->SetModelMatrix(glm::translate(m_v3O2)* glm::translate(0.0f, .8f, 0.0f));
+	//steveBO->UpdatePosition(m_v3O1);
+	//steveBO->SetModelMatrix(glm::translate(m_v3O1)* glm::translate(0.0f, 1.0f, 0.0f) * ToMatrix4(m_qArcBall));
+	//creeperBO->SetModelMatrix(glm::translate(m_v3O2)* glm::translate(0.0f, .8f, 0.0f));
 	
 	
 	//m_m4Steve = steveBO->GetModelMatrix() * glm::translate(m_v3Center1);
-	if (steveBO->IsColliding(creeperBO)) {
+	if (m_pBox1->IsColliding(m_pBox2)) {
 		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetSize() * 2.0f)), RERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetSize() * 2.0f)), RERED, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
@@ -60,7 +61,14 @@ void AppClass::Update(void)
 	}
 	else
 	{
-		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetRadius() * 2.0f)), REWHITE, WIRE);
+		m_pMeshMngr->AddCubeToQueue(
+			//glm::translate(vector3(m_pBox1->GetCenterG())) *
+			glm::translate(vector3(m_pBox1->GetCenterG())) *
+			ToMatrix4(m_qArcBall) *
+			glm::scale(vector3(m_pBox1->GetSize()))
+			, REGREEN, WIRE);
+			
+			
 		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetRadius() * 2.0f)), REWHITE, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
@@ -82,26 +90,20 @@ void AppClass::Update(void)
 
 
 	m_pBox1->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Steve"));
+	//m_pBox1->SetModelMatrix(glm::translate(m_v3O1));
+
 	m_pBox2->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Creeper"));
 
 	bool isColliding = m_pBox1->IsColliding(m_pBox2);
 
-	if (isColliding)
-	{
-		m_pMeshMngr->AddCubeToQueue(
-			glm::translate(vector3(m_pBox1->GetCenterG())) *
-			glm::scale(vector3(m_pBox1->GetSize())), RERED, SOLID);
-		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *
-			glm::scale(vector3(m_pBox2->GetSize())), RERED, SOLID);
-	}
-	else
-	{
-		m_pMeshMngr->AddCubeToQueue(
-			glm::translate(vector3(m_pBox1->GetCenterG())) *
-			glm::scale(vector3(m_pBox1->GetSize())), REGREEN, WIRE);
-		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *
-			glm::scale(vector3(m_pBox2->GetSize())), REGREEN, WIRE);
-	}
+	
+	m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->GetSize())), REBLACK, WIRE);
+	//m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetRadius() * 2.0f)), REWHITE, WIRE); //Big box around steve
+
+
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *
+		glm::scale(vector3(m_pBox2->GetSize())), REGREEN, WIRE);	//Creeper Small Box
+	
 	
 
 	//Adds all loaded instance to the render list
@@ -112,10 +114,10 @@ void AppClass::Update(void)
 
 
 	//Print info on the screen
-	m_pMeshMngr->Print("x:" + std::to_string(steveBO->GetPosition().x) + " ", RERED);
-	m_pMeshMngr->Print("y:" + std::to_string(steveBO->GetPosition().y) + " ", RERED);
-	m_pMeshMngr->Print("z:" + std::to_string(steveBO->GetPosition().z) + " ", RERED);
-	m_pMeshMngr->PrintLine("");
+	//m_pMeshMngr->Print("x:" + std::to_string(m_pBox1->GetPosition().x) + " ", RERED);
+	//m_pMeshMngr->Print("y:" + std::to_string(steveBO->GetPosition().y) + " ", RERED);
+	//m_pMeshMngr->Print("z:" + std::to_string(steveBO->GetPosition().z) + " ", RERED);
+	//m_pMeshMngr->PrintLine("");
 
 }
 

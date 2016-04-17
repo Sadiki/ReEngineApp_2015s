@@ -17,6 +17,7 @@ class MyBoundingCubeClass
 	vector3 m_v3Center = vector3(0.0f); //Will store the center point of the Cube Class
 	vector3 m_v3Min = vector3(0.0f); //Will store the minimum vector of the Cube Class
 	vector3 m_v3Max = vector3(0.0f); //Will store the maximum vector of the Cube Class
+	matrix4 m_m4BigBox = IDENTITY_M4; //Matrix
 
 public:
 	/*
@@ -93,6 +94,13 @@ public:
 
 	vector3 GetSize(void);
 	matrix4 GetModelMatrix(void);
+
+	vector3 GetMax(void);
+	vector3 GetMin(void);
+
+	void UpdateSize(vector3, vector3);
+
+
 	
 private:
 	/*

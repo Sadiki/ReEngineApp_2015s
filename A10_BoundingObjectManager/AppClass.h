@@ -32,6 +32,8 @@ class AppClass : public ReEngAppClass
 	MyBoundingCubeClass* m_pBox1;
 	MyBoundingCubeClass* m_pBox2;
 
+	//matrix4 bigBox;
+
 public:
 	typedef ReEngAppClass super;
 	/*
