@@ -8,6 +8,9 @@ void MyBoundingCubeClass::Init(void)
 	m_v3Center = vector3(0.0f);
 	m_v3Min = vector3(0.0f);
 	m_v3Max = vector3(0.0f);
+	m_v3CenterNew = vector3(0.0f);
+	m_v3MinNew = vector3(0.0f);
+	m_v3MaxNew = vector3(0.0f);
 }
 void MyBoundingCubeClass::Swap(MyBoundingCubeClass& other)
 {
@@ -56,6 +59,18 @@ MyBoundingCubeClass::MyBoundingCubeClass(std::vector<vector3> a_lVectorList)
 	m_v3Size.y = glm::distance(vector3(0.0, m_v3Min.y, 0.0), vector3(0.0, m_v3Max.y, 0.0));
 	m_v3Size.z = glm::distance(vector3(0.0f, 0.0, m_v3Min.z), vector3(0.0, 0.0, m_v3Max.z));
 
+	//top vertices
+	cubeVertices.push_back(vector3(m_v3Max.x, m_v3Max.y, m_v3Max.z));
+	cubeVertices.push_back(vector3(m_v3Max.x, m_v3Max.y, m_v3Min.z));
+	cubeVertices.push_back(vector3(m_v3Min.x, m_v3Max.y, m_v3Min.z));
+	cubeVertices.push_back(vector3(m_v3Min.x, m_v3Max.y, m_v3Max.z));
+
+	//bottom vertices
+	cubeVertices.push_back(vector3(m_v3Max.x, m_v3Min.y, m_v3Max.z));
+	cubeVertices.push_back(vector3(m_v3Max.x, m_v3Min.y, m_v3Min.z));
+	cubeVertices.push_back(vector3(m_v3Min.x, m_v3Min.y, m_v3Min.z));
+	cubeVertices.push_back(vector3(m_v3Min.x, m_v3Min.y, m_v3Max.z));
+
 }
 MyBoundingCubeClass::MyBoundingCubeClass(MyBoundingCubeClass const& other)
 {
@@ -94,10 +109,10 @@ bool MyBoundingCubeClass::IsColliding(MyBoundingCubeClass* const a_pOther)
 	vector3 v3Temp1 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Center, 1.0f));
 	
 	bool bAreColliding = true;
-	vector3 vMin1 = vector3(m_m4ToWorld * vector4(m_v3Min, 1.0f));
-	vector3 vMax1 = vector3(m_m4ToWorld * vector4(m_v3Max, 1.0f));
-	vector3 vMin2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Min, 1.0f));
-	vector3 vMax2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Max, 1.0f));
+	vector3 vMin1 = vector3(m_m4ToWorld * vector4(m_v3MinNew, 1.0f));
+	vector3 vMax1 = vector3(m_m4ToWorld * vector4(m_v3MaxNew, 1.0f));
+	vector3 vMin2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3MinNew, 1.0f));
+	vector3 vMax2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3MaxNew, 1.0f));
 
 	//Check for X
 	if (vMax1.x < vMin2.x)
@@ -136,3 +151,49 @@ vector3 MyBoundingCubeClass::GetMax(void) {
 vector3 MyBoundingCubeClass::GetMin(void) {
 	return m_v3Min;
 }
+
+vector3 MyBoundingCubeClass::NewCubeVertices() {
+	tempCubeVertices.clear();
+	
+	for each (vector3 ve in cubeVertices) {
+		vector3 vTemp = vector3(m_m4ToWorld * vector4(ve, 1.0f));
+		tempCubeVertices.push_back(vTemp);
+	}
+
+	uint nVertexCount = tempCubeVertices.size();
+
+	if (nVertexCount > 0)
+	{
+		m_v3MinNew = tempCubeVertices[0];
+		m_v3MaxNew = tempCubeVertices[0];
+	}
+
+	for (uint i = 0; i < nVertexCount; i++)
+	{
+		if (tempCubeVertices[i].x > m_v3MaxNew.x)
+			m_v3MaxNew.x = tempCubeVertices[i].x;
+		else if (tempCubeVertices[i].x < m_v3MinNew.x)
+			m_v3MinNew.x = tempCubeVertices[i].x;
+
+		if (tempCubeVertices[i].y > m_v3MaxNew.y)
+			m_v3MaxNew.y = tempCubeVertices[i].y;
+		else if (tempCubeVertices[i].y < m_v3MinNew.y)
+			m_v3MinNew.y = tempCubeVertices[i].y;
+
+		if (tempCubeVertices[i].z > m_v3MaxNew.z)
+			m_v3MaxNew.z = tempCubeVertices[i].z;
+		else if (tempCubeVertices[i].z < m_v3MinNew.z)
+			m_v3MinNew.z = tempCubeVertices[i].z;
+	}
+
+	m_v3SizeNew.x = glm::distance(vector3(m_v3MinNew.x, 0.0, 0.0), vector3(m_v3MaxNew.x, 0.0, 0.0));
+	m_v3SizeNew.y = glm::distance(vector3(0.0, m_v3MinNew.y, 0.0), vector3(0.0, m_v3MaxNew.y, 0.0));
+	m_v3SizeNew.z = glm::distance(vector3(0.0f, 0.0, m_v3MinNew.z), vector3(0.0, 0.0, m_v3MaxNew.z));
+
+
+
+
+	
+	return m_v3SizeNew;
+}
+

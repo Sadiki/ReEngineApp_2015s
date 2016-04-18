@@ -19,6 +19,15 @@ class MyBoundingCubeClass
 	vector3 m_v3Max = vector3(0.0f); //Will store the maximum vector of the Cube Class
 	matrix4 m_m4BigBox = IDENTITY_M4; //Matrix
 
+	//outer cuber
+	std::vector<vector3> cubeVertices;
+	vector3 m_v3MinNew = vector3(0.0f); //Will store the minimum vector of the Cube Class
+	vector3 m_v3MaxNew = vector3(0.0f); //Will store the maximum vector of the Cube Class
+	vector3 m_v3CenterNew = vector3(0.0f); //Will store the center point of the Cube Class
+	vector3 m_v3SizeNew = vector3(0.0f);
+
+
+
 public:
 	/*
 	 MyBoundingCubeClass
@@ -99,6 +108,9 @@ public:
 	vector3 GetMin(void);
 
 	void UpdateSize(vector3, vector3);
+	vector3 NewCubeVertices();
+	std::vector<vector3> tempCubeVertices;
+
 
 
 	

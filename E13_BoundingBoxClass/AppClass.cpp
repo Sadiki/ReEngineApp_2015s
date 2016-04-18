@@ -28,10 +28,14 @@ void AppClass::InitVariables(void)
 	m_pBox1 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Steve"));
 	m_pBox2 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Creeper"));
 
+
 }
 
 void AppClass::Update(void)
 {
+	//bool isColliding = m_pBox1->IsColliding(m_pBox2);
+
+
 	//Update the system's time
 	m_pSystem->UpdateTime();
 
@@ -52,8 +56,9 @@ void AppClass::Update(void)
 	
 	//m_m4Steve = steveBO->GetModelMatrix() * glm::translate(m_v3Center1);
 	if (m_pBox1->IsColliding(m_pBox2)) {
-		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetSize() * 2.0f)), RERED, WIRE);
-		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetSize() * 2.0f)), RERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REBLACK, WIRE);
+		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix()* glm::translate(0.0f, 1.0f, 0.0f) * glm::scale(vector3(m_pBox1->GetSize())), RERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix()* glm::translate(0.0f, .8f, 0.0f) * glm::scale(vector3(m_pBox2->GetSize())), RERED, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
@@ -61,6 +66,8 @@ void AppClass::Update(void)
 	}
 	else
 	{
+		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REPURPLE, WIRE);
+
 		m_pMeshMngr->AddCubeToQueue(
 			//glm::translate(vector3(m_pBox1->GetCenterG())) *
 			glm::translate(vector3(m_pBox1->GetCenterG())) *
@@ -69,7 +76,7 @@ void AppClass::Update(void)
 			, REGREEN, WIRE);
 			
 			
-		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetRadius() * 2.0f)), REWHITE, WIRE);
+		//m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetRadius() * 2.0f)), REWHITE, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
 		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
@@ -94,11 +101,10 @@ void AppClass::Update(void)
 
 	m_pBox2->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Creeper"));
 
-	bool isColliding = m_pBox1->IsColliding(m_pBox2);
-
 	
-	m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->GetSize())), REBLACK, WIRE);
+
 	//m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetRadius() * 2.0f)), REWHITE, WIRE); //Big box around steve
+
 
 
 	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *
@@ -114,10 +120,10 @@ void AppClass::Update(void)
 
 
 	//Print info on the screen
-	//m_pMeshMngr->Print("x:" + std::to_string(m_pBox1->GetPosition().x) + " ", RERED);
-	//m_pMeshMngr->Print("y:" + std::to_string(steveBO->GetPosition().y) + " ", RERED);
-	//m_pMeshMngr->Print("z:" + std::to_string(steveBO->GetPosition().z) + " ", RERED);
-	//m_pMeshMngr->PrintLine("");
+	m_pMeshMngr->Print("x:" + std::to_string(m_pBox1->NewCubeVertices().x) + " ", RERED);
+	m_pMeshMngr->Print("y:" + std::to_string(m_pBox1->NewCubeVertices().y) + " ", RERED);
+	m_pMeshMngr->Print("z:" + std::to_string(m_pBox1->NewCubeVertices().z) + " ", RERED);
+	m_pMeshMngr->PrintLine("");
 
 }
 
