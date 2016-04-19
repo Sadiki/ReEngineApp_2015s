@@ -111,7 +111,6 @@ public:
 	void UpdateSize(vector3, vector3);
 	vector3 NewCubeVertices();
 	std::vector<vector3> tempCubeVertices;
-	std::vector<vector3> persistantWorldCubeVertices;
 
 
 

@@ -20,11 +20,6 @@ void AppClass::InitVariables(void)
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
 	m_pMeshMngr->LoadModel("Minecraft\\Creeper.obj", "Creeper");
 
-
-	//steveBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Steve"));
-	//creeperBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Creeper"));
-
-
 	m_pBox1 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Steve"));
 	m_pBox2 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Creeper"));
 
@@ -33,8 +28,6 @@ void AppClass::InitVariables(void)
 
 void AppClass::Update(void)
 {
-	//bool isColliding = m_pBox1->IsColliding(m_pBox2);
-
 
 	//Update the system's time
 	m_pSystem->UpdateTime();
@@ -47,51 +40,31 @@ void AppClass::Update(void)
 		CameraRotation();
 
 	ArcBall();
-	
 
-	//steveBO->UpdatePosition(m_v3O1);
-	//steveBO->SetModelMatrix(glm::translate(m_v3O1)* glm::translate(0.0f, 1.0f, 0.0f) * ToMatrix4(m_qArcBall));
-	//creeperBO->SetModelMatrix(glm::translate(m_v3O2)* glm::translate(0.0f, .8f, 0.0f));
 	
-	
-	//m_m4Steve = steveBO->GetModelMatrix() * glm::translate(m_v3Center1);
-	m_pBox1->NewCubeVertices();
 	if (m_pBox1->IsColliding(m_pBox2)) {
 		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REBLACK, WIRE);
 		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix()* glm::translate(0.0f, 1.0f, 0.0f) * glm::scale(vector3(m_pBox1->GetSize())), RERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix()* glm::translate(0.0f, .8f, 0.0f) * glm::scale(vector3(m_pBox2->GetSize())), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
 		m_pMeshMngr->PrintLine("They are colliding! >_<", RERED);
 	}
 	else
 	{
-		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REWHITE, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REPURPLE, WIRE);
 
 		m_pMeshMngr->AddCubeToQueue(
-			//glm::translate(vector3(m_pBox1->GetCenterG())) *
 			glm::translate(vector3(m_pBox1->GetCenterG())) *
 			ToMatrix4(m_qArcBall) *
 			glm::scale(vector3(m_pBox1->GetSize()))
 			, REGREEN, WIRE);
 			
-			
-		//m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetRadius() * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
 		m_pMeshMngr->PrintLine("They are not colliding! =)", REGREEN);
 	}
 
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 
-	//m_pSphere1->Render(m4Projection, m4View, m4Model);
-	
-	
 
-	
 	//Set the model matrices for both objects and Bounding Spheres
 	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3O1) * ToMatrix4(m_qArcBall), "Steve");
 	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3O2), "Creeper");
@@ -101,11 +74,6 @@ void AppClass::Update(void)
 	//m_pBox1->SetModelMatrix(glm::translate(m_v3O1));
 
 	m_pBox2->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Creeper"));
-
-	
-
-	//m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetRadius() * 2.0f)), REWHITE, WIRE); //Big box around steve
-
 
 
 	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *

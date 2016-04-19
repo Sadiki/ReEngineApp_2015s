@@ -43,7 +43,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A08", "Solomon_Kanekuni_A08
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A10_BoundingObjectManager", "A10_BoundingObjectManager\A10_BoundingObjectManager.vcxproj", "{C146B014-283C-41DD-B377-685FEFF456BF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E12_BoundingSphereClass", "E13_BoundingBoxClass\E13_BoundingBoxClass.vcxproj", "{F8318B78-847D-4D6F-B0AA-F3AC80C5FFF0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E13_BoundingSphereClass", "E13_BoundingBoxClass\E13_BoundingBoxClass.vcxproj", "{F8318B78-847D-4D6F-B0AA-F3AC80C5FFF0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wipeout Cube", "Wipeout Cube\Wipeout Cube.vcxproj", "{E3856248-49C4-4433-9D7E-812B0B1F5B42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -207,6 +209,12 @@ Global
 		{F8318B78-847D-4D6F-B0AA-F3AC80C5FFF0}.Release|x64.ActiveCfg = Release|Win32
 		{F8318B78-847D-4D6F-B0AA-F3AC80C5FFF0}.Release|x86.ActiveCfg = Release|Win32
 		{F8318B78-847D-4D6F-B0AA-F3AC80C5FFF0}.Release|x86.Build.0 = Release|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Debug|x64.ActiveCfg = Debug|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Debug|x86.ActiveCfg = Debug|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Debug|x86.Build.0 = Debug|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Release|x64.ActiveCfg = Release|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Release|x86.ActiveCfg = Release|Win32
+		{E3856248-49C4-4433-9D7E-812B0B1F5B42}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

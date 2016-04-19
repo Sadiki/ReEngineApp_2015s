@@ -110,10 +110,10 @@ bool MyBoundingCubeClass::IsColliding(MyBoundingCubeClass* const a_pOther)
 	vector3 v3Temp1 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Center, 1.0f));
 	
 	bool bAreColliding = true;
-	vector3 vMin1 = vector3(vector4(persistantWorldCubeVertices[1], 1.0f));
-	vector3 vMax1 = vector3(vector4(persistantWorldCubeVertices[0], 1.0f));
-	vector3 vMin2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Min, 1.0f));
-	vector3 vMax2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3Max, 1.0f));
+	vector3 vMin1 = vector3(m_m4ToWorld * vector4(m_v3MinNew, 1.0f));
+	vector3 vMax1 = vector3(m_m4ToWorld * vector4(m_v3MaxNew, 1.0f));
+	vector3 vMin2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3MinNew, 1.0f));
+	vector3 vMax2 = vector3(a_pOther->m_m4ToWorld * vector4(a_pOther->m_v3MaxNew, 1.0f));
 
 	//Check for X
 	if (vMax1.x < vMin2.x)
@@ -224,9 +224,6 @@ vector3 MyBoundingCubeClass::NewCubeVertices() {
 	m_v3SizeNew.y = glm::distance(vector3(0.0, m_v3MinNew.y, 0.0), vector3(0.0, m_v3MaxNew.y, 0.0));
 	m_v3SizeNew.z = glm::distance(vector3(0.0f, 0.0, m_v3MinNew.z), vector3(0.0, 0.0, m_v3MaxNew.z));
 
-	persistantWorldCubeVertices.clear();
-	persistantWorldCubeVertices.push_back(m_v3MaxNew);
-	persistantWorldCubeVertices.push_back(m_v3MinNew);
 	//this->IsColliding(m_v3MaxNew, m_v3MinNew);
 
 
