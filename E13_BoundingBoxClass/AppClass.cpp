@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("MyBoundingSphereClass Elsberry, Bouffard, Kanekuni, Solomon"); // Window Name
+	super::InitWindow("MyBoundingSphereClass example"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -14,28 +14,17 @@ void AppClass::InitVariables(void)
 	//Initialize positions
 	m_v3O1 = vector3(-2.5f, 0.0f, 0.0f);
 	m_v3O2 = vector3(2.5f, 0.0f, 0.0f);
-	
 
 	//Load Models
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
 	m_pMeshMngr->LoadModel("Minecraft\\Creeper.obj", "Creeper");
 
-
-	//steveBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Steve"));
-	//creeperBO = new MyBoundingSphereClass(m_pMeshMngr->GetVertexList("Creeper"));
-
-
-	m_pBox1 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Steve"));
-	m_pBox2 = new MyBoundingCubeClass(m_pMeshMngr->GetVertexList("Creeper"));
-
-
+	m_pBB1 = new MyBoundingBoxClass(m_pMeshMngr->GetVertexList("Steve"));
+	m_pBB2 = new MyBoundingBoxClass(m_pMeshMngr->GetVertexList("Creeper"));
 }
 
 void AppClass::Update(void)
 {
-	//bool isColliding = m_pBox1->IsColliding(m_pBox2);
-
-
 	//Update the system's time
 	m_pSystem->UpdateTime();
 
@@ -47,85 +36,36 @@ void AppClass::Update(void)
 		CameraRotation();
 
 	ArcBall();
-	
 
-	//steveBO->UpdatePosition(m_v3O1);
-	//steveBO->SetModelMatrix(glm::translate(m_v3O1)* glm::translate(0.0f, 1.0f, 0.0f) * ToMatrix4(m_qArcBall));
-	//creeperBO->SetModelMatrix(glm::translate(m_v3O2)* glm::translate(0.0f, .8f, 0.0f));
-	
-	
-	//m_m4Steve = steveBO->GetModelMatrix() * glm::translate(m_v3Center1);
-	m_pBox1->NewCubeVertices();
-	if (m_pBox1->IsColliding(m_pBox2)) {
-		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REBLACK, WIRE);
-		m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix()* glm::translate(0.0f, 1.0f, 0.0f) * glm::scale(vector3(m_pBox1->GetSize())), RERED, WIRE);
-		m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix()* glm::translate(0.0f, .8f, 0.0f) * glm::scale(vector3(m_pBox2->GetSize())), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), RERED, WIRE);
-		m_pMeshMngr->PrintLine("They are colliding! >_<", RERED);
-	}
-	else
-	{
-		m_pMeshMngr->AddCubeToQueue(glm::translate(m_pBox1->GetCenterG()) * glm::scale(vector3(m_pBox1->NewCubeVertices())), REWHITE, WIRE);
-
-		m_pMeshMngr->AddCubeToQueue(
-			//glm::translate(vector3(m_pBox1->GetCenterG())) *
-			glm::translate(vector3(m_pBox1->GetCenterG())) *
-			ToMatrix4(m_qArcBall) *
-			glm::scale(vector3(m_pBox1->GetSize()))
-			, REGREEN, WIRE);
-			
-			
-		//m_pMeshMngr->AddCubeToQueue(m_pBox2->GetModelMatrix() * glm::scale(vector3(m_pBox2->GetRadius() * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(steveBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(creeperBO->GetModelMatrix() * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
-		//m_pMeshMngr->AddSphereToQueue(m_m4Steve * glm::scale(vector3(m_fRadius1 * 2.0f)), REWHITE, WIRE);
-		m_pMeshMngr->PrintLine("They are not colliding! =)", REGREEN);
-	}
-
-	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
-	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
-
-	//m_pSphere1->Render(m4Projection, m4View, m4Model);
-	
-	
-
-	
 	//Set the model matrices for both objects and Bounding Spheres
 	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3O1) * ToMatrix4(m_qArcBall), "Steve");
 	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3O2), "Creeper");
 
+	m_pBB1->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Steve"));
+	m_pBB2->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Creeper"));
 
-	m_pBox1->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Steve"));
-	//m_pBox1->SetModelMatrix(glm::translate(m_v3O1));
+	//Add a representation of the Spheres to the render list
+	vector3 v3Color = REWHITE;
+	if (m_pBB1->IsColliding(m_pBB2))
+		v3Color = RERED;
 
-	m_pBox2->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Creeper"));
+	m_pMeshMngr->AddCubeToRenderList(glm::translate(m_pBB1->GetCenterGlobal()) * glm::scale(m_pBB1->GetHalfWidthG() * 2.0f), v3Color, WIRE);
+	m_pMeshMngr->AddCubeToRenderList(glm::translate(m_pBB2->GetCenterGlobal()) * glm::scale(m_pBB2->GetHalfWidthG() * 2.0f), v3Color, WIRE);
 
-	
-
-	//m_pMeshMngr->AddCubeToQueue(m_pBox1->GetModelMatrix() * glm::scale(vector3(m_pBox1->GetRadius() * 2.0f)), REWHITE, WIRE); //Big box around steve
-
-
-
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_pBox2->GetCenterG()))  *
-		glm::scale(vector3(m_pBox2->GetSize())), REGREEN, WIRE);	//Creeper Small Box
-	
-	
+	m_pMeshMngr->AddCubeToRenderList(m_pBB1->GetModelMatrix() * glm::translate(IDENTITY_M4, m_pBB1->GetCenterLocal()) * glm::scale(m_pBB1->GetHalfWidth() * 2.0f), v3Color, WIRE);
+	m_pMeshMngr->AddCubeToRenderList(m_pBB2->GetModelMatrix() * glm::translate(IDENTITY_M4, m_pBB2->GetCenterLocal()) * glm::scale(m_pBB2->GetHalfWidth() * 2.0f), v3Color, WIRE);
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
-
-
+	//print info into the console
+	printf("FPS: %d            \r", nFPS);//print the Frames per Second
 	//Print info on the screen
-	m_pMeshMngr->Print("x:" + std::to_string(m_pBox1->NewCubeVertices().x) + " ", RERED);
-	m_pMeshMngr->Print("y:" + std::to_string(m_pBox1->NewCubeVertices().y) + " ", RERED);
-	m_pMeshMngr->Print("z:" + std::to_string(m_pBox1->NewCubeVertices().z) + " ", RERED);
-	m_pMeshMngr->PrintLine("");
-
+	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
+	m_pMeshMngr->Print("FPS:");
+	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
 }
 
 void AppClass::Display(void)
@@ -137,19 +77,19 @@ void AppClass::Display(void)
 	switch (m_pCameraMngr->GetCameraMode())
 	{
 	default: //Perspective
-		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY); //renders the XY grid with a 100% scale
+		m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::XY); //renders the XY grid with a 100% scale
 		break;
 	case CAMERAMODE::CAMROTHOX:
-		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::YZ, RERED * 0.75f); //renders the YZ grid with a 100% scale
+		m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::YZ, RERED * 0.75f); //renders the YZ grid with a 100% scale
 		break;
 	case CAMERAMODE::CAMROTHOY:
-		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XZ, REGREEN * 0.75f); //renders the XZ grid with a 100% scale
+		m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::XZ, REGREEN * 0.75f); //renders the XZ grid with a 100% scale
 		break;
 	case CAMERAMODE::CAMROTHOZ:
-		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY, REBLUE * 0.75f); //renders the XY grid with a 100% scale
+		m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::XY, REBLUE * 0.75f); //renders the XY grid with a 100% scale
 		break;
 	}
-
+	
 	m_pMeshMngr->Render(); //renders the render list
 
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
@@ -157,17 +97,7 @@ void AppClass::Display(void)
 
 void AppClass::Release(void)
 {
-	if (m_pBox1 != nullptr)
-	{
-		delete m_pBox1;
-		m_pBox1 = nullptr;
-
-	}
-	if (m_pBox2 != nullptr)
-	{
-		delete m_pBox2;
-		m_pBox2 = nullptr;
-
-	}
 	super::Release(); //release the memory of the inherited fields
+	SafeDelete(m_pBB1);
+	SafeDelete(m_pBB2);
 }
