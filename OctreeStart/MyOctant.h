@@ -13,6 +13,7 @@ class MyOctant
 {
 	int m_nChildCount = 0;
 	vector3 m_v3Position;
+	int tooManyObjects = 0;
 	float m_fSize = 0.0f;
 	MeshManagerSingleton* m_pMeshMngr = nullptr;
 	MyBOManager* m_pBOMngr = nullptr;
@@ -65,6 +66,7 @@ public:
 
 	void Subdivide(void);
 	void ReleaseChildren(void);
+	void CheckSub(void);
 
 private:
 	/*

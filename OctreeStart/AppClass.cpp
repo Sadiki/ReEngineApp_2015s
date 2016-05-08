@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("Sandbox"); // Window Name
+	super::InitWindow("A12_Spatial Optimization"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -34,14 +34,15 @@ void AppClass::InitVariables(void)
 
 	m_pOctreeHead = new MyOctant();
 	m_pOctreeHead->Subdivide();
+	//for (int i = 0; i < m_pOctreeHead->m_pChildren;)
 	//m_pOctreeHead->m_pChildren[0].Subdivide();
 
-	//MyOctant octant = m_pOctreeHead->m_pChildren[0];
-	//for (uint i = 0; i < 1000; i++)
-	//{
-	//	octant.Subdivide();
-	//	octant = octant.m_pChildren[0];
-	//}
+	/*MyOctant octant = m_pOctreeHead->m_pChildren[0];
+	for (uint i = 0; i < 1000; i++)
+	{
+		octant.Subdivide();
+		octant = octant.m_pChildren[0];
+	}*/
 }
 
 void AppClass::Update(void)
