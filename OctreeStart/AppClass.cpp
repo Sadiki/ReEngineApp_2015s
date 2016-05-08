@@ -69,6 +69,14 @@ void AppClass::Update(void)
 
 	m_pOctreeHead->Display();
 
+	for (int i = 0; i < 8; i++) {
+		if (m_pOctreeHead->GetSubCount() > 0) {
+			m_pOctreeHead->CheckSub();
+		}
+
+	}
+	
+
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
 	//print info into the console

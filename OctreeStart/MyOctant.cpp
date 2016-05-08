@@ -47,6 +47,8 @@ void MyOctant::Init(void)
 			m_fSize = fSizeY;
 		if (m_fSize < fSizeZ)
 			m_fSize = fSizeZ;
+
+		subCount = 4;
 	}
 }
 void MyOctant::Swap(MyOctant& other)
@@ -91,10 +93,12 @@ void MyOctant::Subdivide(void)
 	m_pChildren = new MyOctant[8];
 	m_nChildCount = 8;
 	float fNewSize = this->m_fSize / 2;
+	int newSubCount = subCount - 1;
 	for (uint index = 0; index < 8; index++)
 	{
 		m_pChildren[index].m_fSize = fNewSize;
 		m_pChildren[index].m_v3Position = m_v3Position;
+		m_pChildren[index].subCount = newSubCount;
 	}
 	fNewSize /= 2.0f;
 
@@ -141,44 +145,90 @@ void MyOctant::Subdivide(void)
 
 void MyOctant::CheckSub(void) {
 
-	int nObjectCont = m_pBOMngr->GetObjectCount();
+	int nObjectCount = m_pBOMngr->GetObjectCount();
 	vector3 v3MinG = m_pBOMngr->GetBoundingObject(0)->GetMinG();
 	vector3 v3MaxG = m_pBOMngr->GetBoundingObject(0)->GetMaxG();
 
 
-
-	
-
-	for (uint index = 0; index < 8; index++)
+	if (m_pChildren != nullptr)
 	{
-
-		m_pChildren[index].m_v3Position = m_v3Position;
-
-		for (uint i = 1; i < nObjectCont; i++)
+		for (uint index = 0; index < 8; index++)
 		{
-			vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
-			vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
-			//for x
-			if (v3Min.x > m_pChildren[index].m_v3Position.x - (m_pChildren[index].m_fSize / 2) && v3Max.x < m_pChildren[index].m_v3Position.x + (m_pChildren[index].m_fSize / 2)) {
-				m_pChildren[index].tooManyObjects++;
-			}
-		
-			else if (v3Min.y > m_pChildren[index].m_v3Position.y - (m_pChildren[index].m_fSize / 2) && v3Max.y < m_pChildren[index].m_v3Position.y + (m_pChildren[index].m_fSize / 2)) {
-				m_pChildren[index].tooManyObjects++;
-			}
 
-			else if (v3Min.z > m_pChildren[index].m_v3Position.z - (m_pChildren[index].m_fSize / 2) && v3Max.z < m_pChildren[index].m_v3Position.z + (m_pChildren[index].m_fSize / 2)) {
-				m_pChildren[index].tooManyObjects++;
-			}
+			m_pChildren[index].m_v3Position = m_v3Position;
 
-			if (m_pChildren[index].tooManyObjects > 3) {
-				m_pChildren[index].Subdivide();
-				m_pChildren[index].tooManyObjects = 0;
+			for (uint i = 1; i < nObjectCount; i++)
+			{
+				vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
+				vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
+				//for x
+				if (v3Min.x > m_pChildren[index].m_v3Position.x - (m_pChildren[index].m_fSize / 2) && v3Max.x < m_pChildren[index].m_v3Position.x + (m_pChildren[index].m_fSize / 2)) {
+					m_pChildren[index].tooManyObjects++;
+				}
+
+				else if (v3Min.y > m_pChildren[index].m_v3Position.y - (m_pChildren[index].m_fSize / 2) && v3Max.y < m_pChildren[index].m_v3Position.y + (m_pChildren[index].m_fSize / 2)) {
+					m_pChildren[index].tooManyObjects++;
+				}
+
+				else if (v3Min.z > m_pChildren[index].m_v3Position.z - (m_pChildren[index].m_fSize / 2) && v3Max.z < m_pChildren[index].m_v3Position.z + (m_pChildren[index].m_fSize / 2)) {
+					m_pChildren[index].tooManyObjects++;
+				}
+
+				if (m_pChildren[index].tooManyObjects > 3) {
+					m_pChildren[index].Subdivide();
+					m_pChildren[index].tooManyObjects = 0;
+				}
+
 			}
 		}
 	}
 }
 
+void MyOctant::MakeNewChildren(float fNewSize) {
+
+	m_pChildren = new MyOctant[8];
+
+	//for the index 0
+	m_pChildren[0].m_v3Position.x += fNewSize;
+	m_pChildren[0].m_v3Position.y += fNewSize;
+	m_pChildren[0].m_v3Position.z += fNewSize;
+
+	//for the index 1
+	m_pChildren[1].m_v3Position.x -= fNewSize;
+	m_pChildren[1].m_v3Position.y += fNewSize;
+	m_pChildren[1].m_v3Position.z += fNewSize;
+
+	//for the index 2
+	m_pChildren[2].m_v3Position.x -= fNewSize;
+	m_pChildren[2].m_v3Position.y -= fNewSize;
+	m_pChildren[2].m_v3Position.z += fNewSize;
+
+	//for the index 3
+	m_pChildren[3].m_v3Position.x += fNewSize;
+	m_pChildren[3].m_v3Position.y -= fNewSize;
+	m_pChildren[3].m_v3Position.z += fNewSize;
+
+	//for the index 4
+	m_pChildren[4].m_v3Position.x += fNewSize;
+	m_pChildren[4].m_v3Position.y += fNewSize;
+	m_pChildren[4].m_v3Position.z -= fNewSize;
+
+	//for the index 5
+	m_pChildren[5].m_v3Position.x -= fNewSize;
+	m_pChildren[5].m_v3Position.y += fNewSize;
+	m_pChildren[5].m_v3Position.z -= fNewSize;
+
+	//for the index 6
+	m_pChildren[6].m_v3Position.x -= fNewSize;
+	m_pChildren[6].m_v3Position.y -= fNewSize;
+	m_pChildren[6].m_v3Position.z -= fNewSize;
+
+	//for the index 7
+	m_pChildren[7].m_v3Position.x += fNewSize;
+	m_pChildren[7].m_v3Position.y -= fNewSize;
+	m_pChildren[7].m_v3Position.z -= fNewSize;
+
+}
 
 void MyOctant::ReleaseChildren(void)
 {
@@ -187,6 +237,10 @@ void MyOctant::ReleaseChildren(void)
 		delete[] m_pChildren;
 		m_pChildren = nullptr;
 	}
+}
+
+int MyOctant::GetSubCount() {
+	return subCount;
 }
 //Accessors
 
