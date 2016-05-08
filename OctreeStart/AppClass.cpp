@@ -70,9 +70,15 @@ void AppClass::Update(void)
 	m_pOctreeHead->Display();
 
 	for (int i = 0; i < 8; i++) {
-		if (m_pOctreeHead->GetSubCount() > 0) {
-			m_pOctreeHead->CheckSub();
-		}
+	//	if (m_pOctreeHead->GetSubCount() > 0) {
+	//	if (m_pOctreeHead->m_pChildren[i].GetTooManyObjects(i) > 3) {
+	//		//	m_pChildren[index].Subdivide();
+	//		m_pOctreeHead->m_pChildren[i].SetTooManyObjects(i, 0);
+	//	}
+	//	else {
+			m_pOctreeHead->m_pChildren[i].Subdivide();
+	//	}
+	//	}
 
 	}
 	

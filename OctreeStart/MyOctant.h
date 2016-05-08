@@ -73,6 +73,9 @@ public:
 
 	void MakeNewChildren(float); // Copulate
 
+	void SetTooManyObjects(int, int);
+	int GetTooManyObjects(int);
+
 private:
 	/*
 	Method: Release
