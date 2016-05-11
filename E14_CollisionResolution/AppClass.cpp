@@ -129,6 +129,7 @@ void AppClass::Update(void)
 	
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+
 }
 
 void AppClass::Display(void)

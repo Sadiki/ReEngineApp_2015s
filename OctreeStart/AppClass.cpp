@@ -83,7 +83,19 @@ void AppClass::Update(void)
 	m_pMeshMngr->PrintLine(m_pMeshMngr->GetInstanceGroupName(m_selection.first, m_selection.second), REYELLOW);
 	
 	m_pMeshMngr->Print("FPS:");
-	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->Print("<K> Check Collisions");
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->Print("<H> Display Octree");
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->Print("<J> Display Collisions");
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->Print("<G> Display Geometry");
+	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
 }
 
 void AppClass::Display(void)

@@ -189,27 +189,113 @@ vector3 MyBOClass::GetMin(void) { return m_v3Min; }
 vector3 MyBOClass::GetMax(void) { return m_v3Max; }
 vector3 MyBOClass::GetMinG(void) { return m_v3MinG; }
 vector3 MyBOClass::GetMaxG(void) { return m_v3MaxG; }
+
 //--- Non Standard Singleton Methods
 void MyBOClass::DisplaySphere(vector3 a_v3Color)
 {
 	m_pMeshMngr->AddSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) *
 		glm::scale(vector3(m_fRadius * 2.0f)), a_v3Color, WIRE);
 }
+
 void MyBOClass::DisplayOriented(vector3 a_v3Color)
 {
 	m_pMeshMngr->AddCubeToRenderList(glm::translate(m_m4ToWorld, m_v3Center) *
 		glm::scale(m_v3HalfWidth * 2.0f), a_v3Color, WIRE);
 }
+
 void MyBOClass::DisplayReAlligned(vector3 a_v3Color)
 {
 	m_pMeshMngr->AddCubeToRenderList(glm::translate(IDENTITY_M4, m_v3CenterG) *
 		glm::scale(m_v3HalfWidthG * 2.0f), a_v3Color, WIRE);
 }
-bool MyBOClass::SAT(MyBOClass* const a_pOther)
+
+bool MyBOClass::SAT(MyBOClass* const a, MyBOClass* const b)
 {
-	//Replace with your solution for A11
+	GLfloat ra, rb;
+	GLfloat R[3][3], AbsR[3][3];
+	//Compute rotation matrix expressing b in a's coordinate frame
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			R[i][j] = glm::dot(glm::vec3(a->GetModelMatrix()[i].x, a->GetModelMatrix()[i].y, a->GetModelMatrix()[i].z),
+				glm::vec3(b->GetModelMatrix()[j].x, b->GetModelMatrix()[j].y, b->GetModelMatrix()[j].z));
+
+	//Compute translation vector t
+	glm::vec3 t = b->GetCenterGlobal() - a->GetCenterGlobal();
+	//Bring translation into a's coordinate frame
+	t = glm::vec3(glm::dot(t, glm::vec3(a->GetModelMatrix()[0].x, a->GetModelMatrix()[0].y, a->GetModelMatrix()[0].z)),
+		glm::dot(t, glm::vec3(a->GetModelMatrix()[1].x, a->GetModelMatrix()[1].y, a->GetModelMatrix()[1].z)),
+		glm::dot(t, glm::vec3(a->GetModelMatrix()[2].x, a->GetModelMatrix()[2].y, a->GetModelMatrix()[2].z)));
+
+	//Compute common subexpressions.Add in an epsilon term to
+	//counteract arithmetic errors when two edges are parallel and
+	//their cross product is (near) null
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			AbsR[i][j] = glm::abs(R[i][j]) + .00001;
+
+	//Test axes L = A0, L = A1, L = A2
+	for (int i = 0; i < 3; i++) {
+		ra = a->GetHalfWidthG()[i];
+		rb = b->GetHalfWidthG()[0] * AbsR[i][0] + b->GetHalfWidthG()[1] * AbsR[i][1] + b->GetHalfWidthG()[2] * AbsR[i][2];
+		if (glm::abs(t[i]) > ra + rb)return false;
+	}
+
+	//Test axes L = B1, L = B1, L = B2
+	for (int i = 0; i < 3; i++) {
+		ra = a->GetHalfWidthG()[0] * AbsR[0][i] + a->GetHalfWidthG()[1] * AbsR[1][i] + a->GetHalfWidthG()[2] * AbsR[2][i];
+		rb = b->GetHalfWidthG()[i];
+		if (glm::abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb)return false;
+	}
+
+	//Test axis L = A0 X B0
+	ra = a->GetHalfWidthG()[1] * AbsR[2][0] + a->GetHalfWidthG()[2] * AbsR[1][0];
+	rb = b->GetHalfWidthG()[1] * AbsR[0][2] + b->GetHalfWidthG()[2] * AbsR[0][1];
+	if (glm::abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb)return false;
+
+	//Test axis L = A0 X B1
+	ra = a->GetHalfWidthG()[1] * AbsR[2][1] + a->GetHalfWidthG()[2] * AbsR[1][1];
+	rb = b->GetHalfWidthG()[0] * AbsR[0][2] + b->GetHalfWidthG()[2] * AbsR[0][0];
+	if (glm::abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb)return false;
+
+	//Test axis L = A0 x B2
+	ra = a->GetHalfWidthG()[1] * AbsR[2][2] + a->GetHalfWidthG()[2] * AbsR[1][2];
+	rb = b->GetHalfWidthG()[0] * AbsR[0][1] + b->GetHalfWidthG()[1] * AbsR[0][0];
+	if (glm::abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb)return false;
+
+	//Test axis L = A1 x B0
+	ra = a->GetHalfWidthG()[0] * AbsR[2][0] + a->GetHalfWidthG()[2] * AbsR[0][0];
+	rb = b->GetHalfWidthG()[1] * AbsR[1][2] + b->GetHalfWidthG()[2] * AbsR[1][1];
+	if (glm::abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb)return false;
+
+	//Test axis L = A1 X B1
+	ra = a->GetHalfWidthG()[0] * AbsR[2][1] + a->GetHalfWidthG()[2] * AbsR[0][1];
+	rb = b->GetHalfWidthG()[0] * AbsR[1][2] + b->GetHalfWidthG()[2] * AbsR[1][0];
+	if (glm::abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return false;
+
+	//Test axis L = A1 X B2
+	ra = a->GetHalfWidthG()[0] * AbsR[2][2] + a->GetHalfWidthG()[2] * AbsR[0][2];
+	rb = b->GetHalfWidthG()[0] * AbsR[1][1] + b->GetHalfWidthG()[1] * AbsR[1][0];
+	if (glm::abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb)return false;
+
+	//Test axis L = A2 X B0
+	ra = a->GetHalfWidthG()[0] * AbsR[1][0] + a->GetHalfWidthG()[1] * AbsR[0][0];
+	rb = b->GetHalfWidthG()[1] * AbsR[2][2] + b->GetHalfWidthG()[2] * AbsR[2][1];
+	if (glm::abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb)return false;
+
+	//Test axis L = A2 X B1
+	ra = a->GetHalfWidthG()[0] * AbsR[1][1] + a->GetHalfWidthG()[1] * AbsR[0][1];
+	rb = b->GetHalfWidthG()[0] * AbsR[2][2] + b->GetHalfWidthG()[2] * AbsR[2][0];
+	if (glm::abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb)return false;
+
+	//Test axis L = A2 X B2
+	ra = a->GetHalfWidthG()[0] * AbsR[1][2] + a->GetHalfWidthG()[1] * AbsR[0][2];
+	rb = b->GetHalfWidthG()[0] * AbsR[2][1] + b->GetHalfWidthG()[1] * AbsR[2][0];
+	if (glm::abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return false;
+
 	return true;
 }
+
+
 bool MyBOClass::IsColliding(MyBOClass* const a_pOther)
 {
 	//Get all vectors in global space
@@ -249,5 +335,14 @@ bool MyBOClass::IsColliding(MyBOClass* const a_pOther)
 	if (bColliding == false)
 		return false;
 
-	return SAT(a_pOther);
+	return SAT(this , a_pOther);
+}
+
+// Set the boolean that determines which collision check we are performing.
+void MyBOClass::SetCollisionSwitch(bool change) {
+	switchCheck = change;
+}
+
+bool MyBOClass::GetCollisionSwitch() {
+	return switchCheck;
 }

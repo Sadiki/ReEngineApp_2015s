@@ -26,6 +26,9 @@ class MyBOClass
 	vector3 m_v3HalfWidthG = vector3(0.0f);//Will store half the size of all sides
 
 	matrix4 m_m4ToWorld = IDENTITY_M4; //Matrix that will take us from local to world coordinate
+
+	bool switchCheck = false;
+
 public:
 	/*
 	USAGE: Constructor
@@ -138,7 +141,7 @@ public:
 	- MyBOClass* const a_pOther -> Other object to check collision with
 	OUTPUT: result of the collision
 	*/
-	bool SAT(MyBOClass* const a_pOther);
+	bool SAT(MyBOClass* const a, MyBOClass* const b);
 	/*
 	USAGE: Displays the Bounding Sphere of the BO in the specified color
 	ARGUMENTS:
@@ -163,6 +166,10 @@ public:
 	OUTPUT: ---
 	*/
 	void DisplayReAlligned(vector3 a_v3Color = REDEFAULT);
+
+	void SetCollisionSwitch(bool change);
+
+	bool GetCollisionSwitch();
 
 private:
 	/*
