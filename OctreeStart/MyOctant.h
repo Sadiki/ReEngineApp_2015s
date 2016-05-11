@@ -19,6 +19,7 @@ class MyOctant
 	MeshManagerSingleton* m_pMeshMngr = nullptr;
 	MyBOManager* m_pBOMngr = nullptr;
 
+	bool isSubdivide = false;
 	
 	
 public:
@@ -65,14 +66,14 @@ public:
 
 	void Display(void);
 
-	void Subdivide(void);
+	void Subdivide(int);
 	void ReleaseChildren(void);
-	void CheckSub(void);
+	bool CheckSub(MyOctant);
 
 	int GetSubCount();
 
-	void MakeNewChildren(float); // Copulate
-
+	void MakeChildrenPrime(int); // Copulate
+	bool once;
 	void SetTooManyObjects(int, int);
 	int GetTooManyObjects(int);
 

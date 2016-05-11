@@ -9,6 +9,7 @@ void MyOctant::Init(void)
 	m_fSize = 0.0f;
 	m_nChildCount = 0;
 	m_pBOMngr = MyBOManager::GetInstance();
+	once = true;
 
 	if (m_bHead)
 	{
@@ -85,187 +86,323 @@ void MyOctant::Display(void)
 		m_pChildren[n].Display();
 	}
 	m_pMeshMngr->AddCubeToRenderList(glm::translate(m_v3Position) * glm::scale(vector3(m_fSize)), REWHITE, WIRE);
+	//used to check min and max of boxes
+	/*m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x - m_fSize/2, m_v3Position.y - m_fSize/2, m_v3Position.z - m_fSize/2)) * glm::scale(vector3(.5)), RERED, SOLID);
+	m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x + m_fSize / 2, m_v3Position.y + m_fSize / 2, m_v3Position.z + m_fSize / 2)) * glm::scale(vector3(.5)), REGREEN, SOLID);*/
 }
 
-void MyOctant::Subdivide(void)
+void MyOctant::Subdivide(int numChild)
 {
+	m_bHead = false;
+	m_pChildren = new MyOctant[8];
+	float fNewSize = this->m_fSize / 2;
+
+	for (uint index = 0; index < 8; index++)
+			{
+				m_pChildren[index].m_fSize = fNewSize;
+				m_pChildren[index].m_v3Position = m_v3Position;
+				//m_pChildren[index].subCount = newSubCount;  - Not being used to limit the subdivisions
+			}
+			fNewSize /= 2.0f;
+	//if (once == false)
+	//{
+		for (int n = 0; n < 8; n++)
+		{
+			if (CheckSub(m_pChildren[n]))
+			{
+				//m_nChildCount = 8;
+				//int newSubCount = subCount - 1;
+			
+
+				//for the index 0
+				m_pChildren[0].m_v3Position.x += fNewSize;
+				m_pChildren[0].m_v3Position.y += fNewSize;
+				m_pChildren[0].m_v3Position.z += fNewSize;
+
+				//for the index 1
+				m_pChildren[1].m_v3Position.x -= fNewSize;
+				m_pChildren[1].m_v3Position.y += fNewSize;
+				m_pChildren[1].m_v3Position.z += fNewSize;
+
+				//for the index 2
+				m_pChildren[2].m_v3Position.x -= fNewSize;
+				m_pChildren[2].m_v3Position.y -= fNewSize;
+				m_pChildren[2].m_v3Position.z += fNewSize;
+
+				//for the index 3
+				m_pChildren[3].m_v3Position.x += fNewSize;
+				m_pChildren[3].m_v3Position.y -= fNewSize;
+				m_pChildren[3].m_v3Position.z += fNewSize;
+
+				//for the index 4
+				m_pChildren[4].m_v3Position.x += fNewSize;
+				m_pChildren[4].m_v3Position.y += fNewSize;
+				m_pChildren[4].m_v3Position.z -= fNewSize;
+
+				//for the index 5
+				m_pChildren[5].m_v3Position.x -= fNewSize;
+				m_pChildren[5].m_v3Position.y += fNewSize;
+				m_pChildren[5].m_v3Position.z -= fNewSize;
+
+				//for the index 6
+				m_pChildren[6].m_v3Position.x -= fNewSize;
+				m_pChildren[6].m_v3Position.y -= fNewSize;
+				m_pChildren[6].m_v3Position.z -= fNewSize;
+
+				//for the index 7
+				m_pChildren[7].m_v3Position.x += fNewSize;
+				m_pChildren[7].m_v3Position.y -= fNewSize;
+				m_pChildren[7].m_v3Position.z -= fNewSize;
+			}
+		}
+	//}
+
+	// Run once to set default - Commented because unsure of why it's needed
+	/*
+	//if (once == true) {
+	//	m_nChildCount = 8;
+	//	int newSubCount = subCount - 1;
+	//	for (uint index = 0; index < 8; index++)
+	//	{
+	//		m_pChildren[index].m_fSize = fNewSize;
+	//		m_pChildren[index].m_v3Position = m_v3Position;
+	//		m_pChildren[index].subCount = newSubCount;
+	//	}
+	//	fNewSize /= 2.0f;
+
+	//	//for the index 0
+	//	m_pChildren[0].m_v3Position.x += fNewSize;
+	//	m_pChildren[0].m_v3Position.y += fNewSize;
+	//	m_pChildren[0].m_v3Position.z += fNewSize;
+
+	//	//for the index 1
+	//	m_pChildren[1].m_v3Position.x -= fNewSize;
+	//	m_pChildren[1].m_v3Position.y += fNewSize;
+	//	m_pChildren[1].m_v3Position.z += fNewSize;
+
+	//	//for the index 2
+	//	m_pChildren[2].m_v3Position.x -= fNewSize;
+	//	m_pChildren[2].m_v3Position.y -= fNewSize;
+	//	m_pChildren[2].m_v3Position.z += fNewSize;
+
+	//	//for the index 3
+	//	m_pChildren[3].m_v3Position.x += fNewSize;
+	//	m_pChildren[3].m_v3Position.y -= fNewSize;
+	//	m_pChildren[3].m_v3Position.z += fNewSize;
+
+	//	//for the index 4
+	//	m_pChildren[4].m_v3Position.x += fNewSize;
+	//	m_pChildren[4].m_v3Position.y += fNewSize;
+	//	m_pChildren[4].m_v3Position.z -= fNewSize;
+
+	//	//for the index 5
+	//	m_pChildren[5].m_v3Position.x -= fNewSize;
+	//	m_pChildren[5].m_v3Position.y += fNewSize;
+	//	m_pChildren[5].m_v3Position.z -= fNewSize;
+
+	//	//for the index 6
+	//	m_pChildren[6].m_v3Position.x -= fNewSize;
+	//	m_pChildren[6].m_v3Position.y -= fNewSize;
+	//	m_pChildren[6].m_v3Position.z -= fNewSize;
+
+	//	//for the index 7
+	//	m_pChildren[7].m_v3Position.x += fNewSize;
+	//	m_pChildren[7].m_v3Position.y -= fNewSize;
+	//	m_pChildren[7].m_v3Position.z -= fNewSize;
+
+	//	once = false;
+	//}
+	*/
+	for (int i = 0; i < numChild; i++) {
+		Subdivide(numChild - 1);
+		isSubdivide = false;
+	}
+}//garbage
+
+//for (int i = 0; i < 8; i++) {
+//		if (m_pOctreeHead->GetSubCount() > 0) {
+//		if (m_pOctreeHead->m_pChildren[i].GetTooManyObjects(i) > 3) {
+//			//	m_pChildren[index].Subdivide();
+//			m_pOctreeHead->m_pChildren[i].SetTooManyObjects(i, 0);
+//		}
+//		else {
+//		m_pOctreeHead->m_pChildren[i].Subdivide();
+//		}
+//		}
+//
+//}
 
 
+void MyOctant::MakeChildrenPrime(int numChild) //Make the prime children, the first real 
+											   //subdivsion of the cube around the creepers
+{
 	m_bHead = false;
 	m_pChildren = new MyOctant[8];
 	m_nChildCount = 8;
 	float fNewSize = this->m_fSize / 2;
-	int newSubCount = subCount - 1;
+
 	for (uint index = 0; index < 8; index++)
 	{
 		m_pChildren[index].m_fSize = fNewSize;
 		m_pChildren[index].m_v3Position = m_v3Position;
-		m_pChildren[index].subCount = newSubCount;
 	}
+
 	fNewSize /= 2.0f;
 
+	//for the index 0
+	m_pChildren[0].m_v3Position.x += fNewSize;
+	m_pChildren[0].m_v3Position.y += fNewSize;
+	m_pChildren[0].m_v3Position.z += fNewSize;
 
-	int nObjectCount = m_pBOMngr->GetObjectCount();
-	vector3 v3MinG = m_pBOMngr->GetBoundingObject(0)->GetMinG();
-	vector3 v3MaxG = m_pBOMngr->GetBoundingObject(0)->GetMaxG();
+	//for the index 1
+	m_pChildren[1].m_v3Position.x -= fNewSize;
+	m_pChildren[1].m_v3Position.y += fNewSize;
+	m_pChildren[1].m_v3Position.z += fNewSize;
+
+	//for the index 2
+	m_pChildren[2].m_v3Position.x -= fNewSize;
+	m_pChildren[2].m_v3Position.y -= fNewSize;
+	m_pChildren[2].m_v3Position.z += fNewSize;
+
+	//for the index 3
+	m_pChildren[3].m_v3Position.x += fNewSize;
+	m_pChildren[3].m_v3Position.y -= fNewSize;
+	m_pChildren[3].m_v3Position.z += fNewSize;
+
+	//for the index 4
+	m_pChildren[4].m_v3Position.x += fNewSize;
+	m_pChildren[4].m_v3Position.y += fNewSize;
+	m_pChildren[4].m_v3Position.z -= fNewSize;
+
+	//for the index 5
+	m_pChildren[5].m_v3Position.x -= fNewSize;
+	m_pChildren[5].m_v3Position.y += fNewSize;
+	m_pChildren[5].m_v3Position.z -= fNewSize;
+
+	//for the index 6
+	m_pChildren[6].m_v3Position.x -= fNewSize;
+	m_pChildren[6].m_v3Position.y -= fNewSize;
+	m_pChildren[6].m_v3Position.z -= fNewSize;
+
+	//for the index 7
+	m_pChildren[7].m_v3Position.x += fNewSize;
+	m_pChildren[7].m_v3Position.y -= fNewSize;
+	m_pChildren[7].m_v3Position.z -= fNewSize;
+
+	//positions at xyz are the center of the cube
+	//this->CheckSub(m_pChildren[1]);
 
 
-	if (m_pChildren != nullptr)
+	
+	//for (int i = 0; i < m_pBOMngr->GetObjectCount(); i++) {
+	//	vector3 v3MaxObj = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
+	//	vector3 v3MinObj = m_pBOMngr->GetBoundingObject(i)->GetMinG();
+
+	//	// Perform a size check with the octree boxes
+	//	vector3 sizeObj = vector3(
+	//		v3MaxObj.x - v3MaxObj.x, v3
+	//		)
+
+	//}
+	//
+
+
+
+	/*
+	- Going to work on a different way of detecting objects inside of octree boxes
+	*/
+
+	for (uint q = 0; q < m_nChildCount; q++) 
 	{
-		for (uint index = 0; index < 8; index++)
+		m_pChildren[q].isSubdivide = false;
+		int nObjectCount = m_pBOMngr->GetObjectCount();
+		for (uint i = 0; i < nObjectCount; i++)
 		{
-
-			m_pChildren[index].m_v3Position = m_v3Position;
-
-			for (uint i = 1; i < nObjectCount; i++)
+			vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
+			vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
+			vector3 v3Cent = m_pBOMngr->GetBoundingObject(i)->GetCenterGlobal();
+			//for x
+			if (v3Min.x > m_pChildren[q].m_v3Position.x - (m_pChildren[q].m_fSize / 2) && v3Max.x < m_pChildren[q].m_v3Position.x + (m_pChildren[q].m_fSize / 2) && //all parts are in the child
+				v3Min.y > m_pChildren[q].m_v3Position.y - (m_pChildren[q].m_fSize / 2) && v3Max.y < m_pChildren[q].m_v3Position.y + (m_pChildren[q].m_fSize / 2) &&
+				v3Min.z > m_pChildren[q].m_v3Position.z - (m_pChildren[q].m_fSize / 2) && v3Max.z < m_pChildren[q].m_v3Position.z + (m_pChildren[q].m_fSize / 2) 
+				)
 			{
-				vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
-				vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
-				//for x
-				if (v3Min.x > m_pChildren[index].m_v3Position.x - (m_pChildren[index].m_fSize / 2) && v3Max.x < m_pChildren[index].m_v3Position.x + (m_pChildren[index].m_fSize / 2)) {
-					m_pChildren[index].tooManyObjects++;
-				}
+				m_pChildren[q].tooManyObjects++;
+			}
+			else if (v3Min.x > m_pChildren[q].m_v3Position.x - (m_pChildren[q].m_fSize / 2) && v3Min.x < m_pChildren[q].m_v3Position.x + (m_pChildren[q].m_fSize / 2) &&//min point in child
+					v3Min.y > m_pChildren[q].m_v3Position.y - (m_pChildren[q].m_fSize / 2) && v3Min.y < m_pChildren[q].m_v3Position.y + (m_pChildren[q].m_fSize / 2) &&
+					v3Min.z > m_pChildren[q].m_v3Position.z - (m_pChildren[q].m_fSize / 2) && v3Min.z < m_pChildren[q].m_v3Position.z + (m_pChildren[q].m_fSize / 2)
+					)
+			{
+				m_pChildren[q].tooManyObjects++;
+			}
+			
+			else if(v3Max.x < m_pChildren[q].m_v3Position.x + (m_pChildren[q].m_fSize / 2) && v3Max.x > m_pChildren[q].m_v3Position.x - (m_pChildren[q].m_fSize / 2) &&//max point in child
+					v3Max.y < m_pChildren[q].m_v3Position.y + (m_pChildren[q].m_fSize / 2) && v3Max.y > m_pChildren[q].m_v3Position.y - (m_pChildren[q].m_fSize / 2) &&
+					v3Max.z < m_pChildren[q].m_v3Position.z + (m_pChildren[q].m_fSize / 2) && v3Max.z > m_pChildren[q].m_v3Position.z - (m_pChildren[q].m_fSize / 2)
+					)
+			{
+				m_pChildren[q].tooManyObjects++;
+			}
+			else if(v3Cent.x > m_pChildren[q].m_v3Position.x - (m_pChildren[q].m_fSize / 2) && v3Cent.x < m_pChildren[q].m_v3Position.x + (m_pChildren[q].m_fSize / 2) && //center point in child
+					v3Cent.y > m_pChildren[q].m_v3Position.y - (m_pChildren[q].m_fSize / 2) && v3Cent.y < m_pChildren[q].m_v3Position.y + (m_pChildren[q].m_fSize / 2) &&
+					v3Cent.z > m_pChildren[q].m_v3Position.z - (m_pChildren[q].m_fSize / 2) && v3Cent.z < m_pChildren[q].m_v3Position.z + (m_pChildren[q].m_fSize / 2) 
+					)
+			{
+				m_pChildren[q].tooManyObjects++;
+			}
 
-				else if (v3Min.y > m_pChildren[index].m_v3Position.y - (m_pChildren[index].m_fSize / 2) && v3Max.y < m_pChildren[index].m_v3Position.y + (m_pChildren[index].m_fSize / 2)) {
-					m_pChildren[index].tooManyObjects++;
-				}
+			if (m_pChildren[q].tooManyObjects > 2) {//set the number of things that can inhabit a child before subdivide
+				m_pChildren[q].tooManyObjects = 0;
+				m_pChildren[q].isSubdivide = true;
+			}
 
-				else if (v3Min.z > m_pChildren[index].m_v3Position.z - (m_pChildren[index].m_fSize / 2) && v3Max.z < m_pChildren[index].m_v3Position.z + (m_pChildren[index].m_fSize / 2)) {
-					m_pChildren[index].tooManyObjects++;
-				}
-
-				
-
+			if (m_pChildren[q].isSubdivide )//recursion adn limits the number of subdivisons 
+			{
+				int temp = numChild - 1;
+				m_pChildren[q].MakeChildrenPrime(temp);
 			}
 		}
 	}
-
-	//for the index 0
-	m_pChildren[0].m_v3Position.x += fNewSize;
-	m_pChildren[0].m_v3Position.y += fNewSize;
-	m_pChildren[0].m_v3Position.z += fNewSize;
-
-	//for the index 1
-	m_pChildren[1].m_v3Position.x -= fNewSize;
-	m_pChildren[1].m_v3Position.y += fNewSize;
-	m_pChildren[1].m_v3Position.z += fNewSize;
-
-	//for the index 2
-	m_pChildren[2].m_v3Position.x -= fNewSize;
-	m_pChildren[2].m_v3Position.y -= fNewSize;
-	m_pChildren[2].m_v3Position.z += fNewSize;
-
-	//for the index 3
-	m_pChildren[3].m_v3Position.x += fNewSize;
-	m_pChildren[3].m_v3Position.y -= fNewSize;
-	m_pChildren[3].m_v3Position.z += fNewSize;
-
-	//for the index 4
-	m_pChildren[4].m_v3Position.x += fNewSize;
-	m_pChildren[4].m_v3Position.y += fNewSize;
-	m_pChildren[4].m_v3Position.z -= fNewSize;
-
-	//for the index 5
-	m_pChildren[5].m_v3Position.x -= fNewSize;
-	m_pChildren[5].m_v3Position.y += fNewSize;
-	m_pChildren[5].m_v3Position.z -= fNewSize;
-
-	//for the index 6
-	m_pChildren[6].m_v3Position.x -= fNewSize;
-	m_pChildren[6].m_v3Position.y -= fNewSize;
-	m_pChildren[6].m_v3Position.z -= fNewSize;
-
-	//for the index 7
-	m_pChildren[7].m_v3Position.x += fNewSize;
-	m_pChildren[7].m_v3Position.y -= fNewSize;
-	m_pChildren[7].m_v3Position.z -= fNewSize;
 }
 
-void MyOctant::CheckSub(void) {
+bool MyOctant::CheckSub(MyOctant octChild) {
 
-	//int nObjectCount = m_pBOMngr->GetObjectCount();
-	//vector3 v3MinG = m_pBOMngr->GetBoundingObject(0)->GetMinG();
-	//vector3 v3MaxG = m_pBOMngr->GetBoundingObject(0)->GetMaxG();
+	int nObjectCount = m_pBOMngr->GetObjectCount();
 
+		for (uint i = 1; i < nObjectCount; i++)
+		{
+			vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
+			vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
+			
+			if (v3Min.x > octChild.m_v3Position.x - (octChild.m_fSize / 2) && v3Max.x < octChild.m_v3Position.x + (octChild.m_fSize / 2) &&
+				v3Min.y > octChild.m_v3Position.y - (octChild.m_fSize / 2) && v3Max.y < octChild.m_v3Position.y + (octChild.m_fSize / 2) &&
+				v3Min.z > octChild.m_v3Position.z - (octChild.m_fSize / 2) && v3Max.z < octChild.m_v3Position.z + (octChild.m_fSize / 2))
+			{
+				octChild.tooManyObjects++;
+			}
 
-	//if (m_pChildren != nullptr)
-	//{
-	//	for (uint index = 0; index < 8; index++)
-	//	{
+			/*////for x
+			//if (v3Min.x > octChild.m_v3Position.x - (octChild.m_fSize / 2) || v3Max.x < octChild.m_v3Position.x + (octChild.m_fSize / 2)) {
+			//	octChild.tooManyObjects++; 
+			//}
 
-	//		m_pChildren[index].m_v3Position = m_v3Position;
+			//else if (v3Min.y > octChild.m_v3Position.y - (octChild.m_fSize / 2) || v3Max.y < octChild.m_v3Position.y + (octChild.m_fSize / 2)) {
+			//	octChild.tooManyObjects++;
+			//}
 
-	//		for (uint i = 1; i < nObjectCount; i++)
-	//		{
-	//			vector3 v3Min = m_pBOMngr->GetBoundingObject(i)->GetMinG();
-	//			vector3 v3Max = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
-	//			//for x
-	//			if (v3Min.x > m_pChildren[index].m_v3Position.x - (m_pChildren[index].m_fSize / 2) && v3Max.x < m_pChildren[index].m_v3Position.x + (m_pChildren[index].m_fSize / 2)) {
-	//				m_pChildren[index].tooManyObjects++;
-	//			}
+			//else if (v3Min.z > octChild.m_v3Position.z - (octChild.m_fSize / 2) || v3Max.z < octChild.m_v3Position.z + (octChild.m_fSize / 2)) {
+			//	octChild.tooManyObjects++;
+			//}*///OLD AND BROKEN
 
-	//			else if (v3Min.y > m_pChildren[index].m_v3Position.y - (m_pChildren[index].m_fSize / 2) && v3Max.y < m_pChildren[index].m_v3Position.y + (m_pChildren[index].m_fSize / 2)) {
-	//				m_pChildren[index].tooManyObjects++;
-	//			}
+			if (octChild.tooManyObjects > 0) {
+				octChild.tooManyObjects = 0;
+				octChild.isSubdivide = true;
+			}
 
-	//			else if (v3Min.z > m_pChildren[index].m_v3Position.z - (m_pChildren[index].m_fSize / 2) && v3Max.z < m_pChildren[index].m_v3Position.z + (m_pChildren[index].m_fSize / 2)) {
-	//				m_pChildren[index].tooManyObjects++;
-	//			}
-
-	//			if (m_pChildren[index].tooManyObjects > 3) {
-	//				m_pChildren[index].Subdivide();
-	//				m_pChildren[index].tooManyObjects = 0;
-	//			}
-
-	//		}
-	//	}
-	//}
-}
-
-void MyOctant::MakeNewChildren(float fNewSize) {
-
-	m_pChildren = new MyOctant[8];
-
-	//for the index 0
-	m_pChildren[0].m_v3Position.x += fNewSize;
-	m_pChildren[0].m_v3Position.y += fNewSize;
-	m_pChildren[0].m_v3Position.z += fNewSize;
-
-	//for the index 1
-	m_pChildren[1].m_v3Position.x -= fNewSize;
-	m_pChildren[1].m_v3Position.y += fNewSize;
-	m_pChildren[1].m_v3Position.z += fNewSize;
-
-	//for the index 2
-	m_pChildren[2].m_v3Position.x -= fNewSize;
-	m_pChildren[2].m_v3Position.y -= fNewSize;
-	m_pChildren[2].m_v3Position.z += fNewSize;
-
-	//for the index 3
-	m_pChildren[3].m_v3Position.x += fNewSize;
-	m_pChildren[3].m_v3Position.y -= fNewSize;
-	m_pChildren[3].m_v3Position.z += fNewSize;
-
-	//for the index 4
-	m_pChildren[4].m_v3Position.x += fNewSize;
-	m_pChildren[4].m_v3Position.y += fNewSize;
-	m_pChildren[4].m_v3Position.z -= fNewSize;
-
-	//for the index 5
-	m_pChildren[5].m_v3Position.x -= fNewSize;
-	m_pChildren[5].m_v3Position.y += fNewSize;
-	m_pChildren[5].m_v3Position.z -= fNewSize;
-
-	//for the index 6
-	m_pChildren[6].m_v3Position.x -= fNewSize;
-	m_pChildren[6].m_v3Position.y -= fNewSize;
-	m_pChildren[6].m_v3Position.z -= fNewSize;
-
-	//for the index 7
-	m_pChildren[7].m_v3Position.x += fNewSize;
-	m_pChildren[7].m_v3Position.y -= fNewSize;
-	m_pChildren[7].m_v3Position.z -= fNewSize;
-
+		}
+		return octChild.isSubdivide;
+	
 }
 
 void MyOctant::SetTooManyObjects(int index, int objNum) {

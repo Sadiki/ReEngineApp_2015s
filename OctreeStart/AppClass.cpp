@@ -23,26 +23,28 @@ void AppClass::InitVariables(void)
 		REAXISY);//What is up
 	//Load a model onto the Mesh manager
 	m_pBOMngr = MyBOManager::GetInstance();
-	for (uint n = 0; n < 10; n++)
+	
+	creeps = 50;
+	for (uint n = 0; n < creeps; n++)	//Set the number of creepers to spawn in the screen
 	{
 		String sName = "Creeper" + std::to_string(n);
 		vector3 v3Position = glm::sphericalRand(10.0f);
 		m_pMeshMngr->LoadModel("Minecraft\\Creeper.obj", sName, false, 
 			glm::translate(v3Position + vector3(5,0,0)));
 		m_pBOMngr->AddObject(sName);
+		objectList.push_back(sName);
 	}
 
 	m_pOctreeHead = new MyOctant();
-	m_pOctreeHead->Subdivide();
-	//for (int i = 0; i < m_pOctreeHead->m_pChildren;)
-	//m_pOctreeHead->m_pChildren[0].Subdivide();
 
-	/*MyOctant octant = m_pOctreeHead->m_pChildren[0];
-	for (uint i = 0; i < 1000; i++)
-	{
-		octant.Subdivide();
-		octant = octant.m_pChildren[0];
-	}*/
+	if (creeps > 1)		//Check to see if subdivisions are neccessary
+		m_pOctreeHead->MakeChildrenPrime(8);
+
+	
+
+	
+	
+	
 }
 
 void AppClass::Update(void)
@@ -61,26 +63,13 @@ void AppClass::Update(void)
 	ArcBall();
 	
 	//Set the model matrix for the first model to be the arcball
-	m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
+	//m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
 	
 	//Adds all loaded instance to the render list
 	//m_pMeshMngr->AddSkyboxToRenderList("Skybox_01.png");
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
 
 	m_pOctreeHead->Display();
-
-	for (int i = 0; i < 8; i++) {
-	//	if (m_pOctreeHead->GetSubCount() > 0) {
-	//	if (m_pOctreeHead->m_pChildren[i].GetTooManyObjects(i) > 3) {
-	//		//	m_pChildren[index].Subdivide();
-	//		m_pOctreeHead->m_pChildren[i].SetTooManyObjects(i, 0);
-	//	}
-	//	else {
-			m_pOctreeHead->m_pChildren[i].Subdivide();
-	//	}
-	//	}
-
-	}
 	
 
 	//Indicate the FPS

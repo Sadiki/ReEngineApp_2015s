@@ -8,6 +8,7 @@ Date: 2015/09 (Last Modified on: 15/11)
 #include "RE\ReEngAppClass.h"
 #include <SFML\Graphics.hpp>
 #include "MyOctant.h"
+#include <vector>
 
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
@@ -15,6 +16,11 @@ class AppClass : public ReEngAppClass
 {
 	MyOctant* m_pOctreeHead = nullptr;
 	MyBOManager* m_pBOMngr = nullptr;
+
+	std::vector<String> objectList;
+
+	uint creeps = 0; //keep track of how many creepers are spawned in the scene
+
 public:
 	typedef ReEngAppClass super;
 
@@ -90,6 +96,7 @@ public:
 	OUTPUT: ---
 	*/
 	virtual void Release(void) final;
+
 };
 /*
 USAGE:
