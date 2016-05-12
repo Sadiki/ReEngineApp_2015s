@@ -209,17 +209,52 @@ void MyBOManager::Update(void)
 }
 void MyBOManager::CheckCollisions(void)
 {
-	for (uint nObjectA = 0; nObjectA < m_nObjectCount - 1; nObjectA++)
-	{
-		for (uint nObjectB = nObjectA + 1; nObjectB < m_nObjectCount; nObjectB++)
+
+	// If true then perform SAT
+	if (switchCheck) {
+		for (uint nObjectA = 0; nObjectA < m_nObjectCount - 1; nObjectA++)
 		{
-			if (m_lObject[nObjectA]->IsColliding(m_lObject[nObjectB]))
+			for (uint nObjectB = nObjectA + 1; nObjectB < m_nObjectCount; nObjectB++)
 			{
-				m_llCollidingIndices[nObjectA].push_back(nObjectB);
-				m_llCollidingIndices[nObjectB].push_back(nObjectA);
+				if (m_lObject[nObjectA]->SAT(m_lObject[nObjectA], m_lObject[nObjectB]))
+				{
+					m_lObject[nObjectA]->SetIsSphereDisplayed(true);
+					m_llCollidingIndices[nObjectA].push_back(nObjectB);
+					m_llCollidingIndices[nObjectB].push_back(nObjectA);
+				
+				}
+				else {
+					m_lObject[nObjectA]->SetIsSphereDisplayed(false);
+					m_llCollidingIndices[nObjectA].push_back(nObjectB);
+					m_llCollidingIndices[nObjectB].push_back(nObjectA);
+				}
 			}
 		}
 	}
+	else
+	{
+		// Perform Brute Force	
+		for (uint nObjectA = 0; nObjectA < m_nObjectCount - 1; nObjectA++)
+		{
+			for (uint nObjectB = nObjectA + 1; nObjectB < m_nObjectCount; nObjectB++)
+			{
+				if (m_lObject[nObjectA]->IsColliding(m_lObject[nObjectB]))
+				{
+					m_lObject[nObjectA]->SetIsSphereDisplayed(true);
+					m_llCollidingIndices[nObjectA].push_back(nObjectB);
+					m_llCollidingIndices[nObjectB].push_back(nObjectA);
+			
+				}
+				else {
+					m_lObject[nObjectA]->SetIsSphereDisplayed(false);
+					m_llCollidingIndices[nObjectA].push_back(nObjectB);
+					m_llCollidingIndices[nObjectB].push_back(nObjectA);
+				}
+			}
+		}
+	}
+
+
 }
 std::vector<int> MyBOManager::GetCollidingVector(String a_sIndex)
 {
@@ -250,3 +285,20 @@ int MyBOManager::GetIndex(String a_sIndex)
 	return var->second;//Get the index
 }
 int MyBOManager::GetObjectCount(void) { return m_nObjectCount; };
+
+// Set the boolean that determines which collision check we are performing.
+void MyBOManager::SetCollisionSwitch(bool change) {
+	switchCheck = change;
+}
+
+bool MyBOManager::GetCollisionSwitch() {
+	return switchCheck;
+}
+
+void MyBOManager::SetSphereCheck(bool change) {
+	sphereCheck = change;
+}
+
+bool MyBOManager::GetSphereCheck() {
+	return sphereCheck;
+}

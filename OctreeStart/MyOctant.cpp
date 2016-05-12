@@ -49,7 +49,6 @@ void MyOctant::Init(void)
 		if (m_fSize < fSizeZ)
 			m_fSize = fSizeZ;
 
-		subCount = 4;
 	}
 }
 void MyOctant::Swap(MyOctant& other)
@@ -81,156 +80,15 @@ MyOctant::~MyOctant(){Release();};
 
 void MyOctant::Display(void)
 {
-	for (uint n = 0; n < m_nChildCount; n++)
-	{
-		m_pChildren[n].Display();
-	}
-	m_pMeshMngr->AddCubeToRenderList(glm::translate(m_v3Position) * glm::scale(vector3(m_fSize)), REWHITE, WIRE);
-	//used to check min and max of boxes
-	/*m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x - m_fSize/2, m_v3Position.y - m_fSize/2, m_v3Position.z - m_fSize/2)) * glm::scale(vector3(.5)), RERED, SOLID);
-	m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x + m_fSize / 2, m_v3Position.y + m_fSize / 2, m_v3Position.z + m_fSize / 2)) * glm::scale(vector3(.5)), REGREEN, SOLID);*/
-}
-
-void MyOctant::Subdivide(int numChild)
-{
-	m_bHead = false;
-	m_pChildren = new MyOctant[8];
-	float fNewSize = this->m_fSize / 2;
-
-	for (uint index = 0; index < 8; index++)
-			{
-				m_pChildren[index].m_fSize = fNewSize;
-				m_pChildren[index].m_v3Position = m_v3Position;
-				//m_pChildren[index].subCount = newSubCount;  - Not being used to limit the subdivisions
-			}
-			fNewSize /= 2.0f;
-	//if (once == false)
-	//{
-		for (int n = 0; n < 8; n++)
+		for (uint n = 0; n < m_nChildCount; n++)
 		{
-			if (CheckSub(m_pChildren[n]))
-			{
-				//m_nChildCount = 8;
-				//int newSubCount = subCount - 1;
-			
-
-				//for the index 0
-				m_pChildren[0].m_v3Position.x += fNewSize;
-				m_pChildren[0].m_v3Position.y += fNewSize;
-				m_pChildren[0].m_v3Position.z += fNewSize;
-
-				//for the index 1
-				m_pChildren[1].m_v3Position.x -= fNewSize;
-				m_pChildren[1].m_v3Position.y += fNewSize;
-				m_pChildren[1].m_v3Position.z += fNewSize;
-
-				//for the index 2
-				m_pChildren[2].m_v3Position.x -= fNewSize;
-				m_pChildren[2].m_v3Position.y -= fNewSize;
-				m_pChildren[2].m_v3Position.z += fNewSize;
-
-				//for the index 3
-				m_pChildren[3].m_v3Position.x += fNewSize;
-				m_pChildren[3].m_v3Position.y -= fNewSize;
-				m_pChildren[3].m_v3Position.z += fNewSize;
-
-				//for the index 4
-				m_pChildren[4].m_v3Position.x += fNewSize;
-				m_pChildren[4].m_v3Position.y += fNewSize;
-				m_pChildren[4].m_v3Position.z -= fNewSize;
-
-				//for the index 5
-				m_pChildren[5].m_v3Position.x -= fNewSize;
-				m_pChildren[5].m_v3Position.y += fNewSize;
-				m_pChildren[5].m_v3Position.z -= fNewSize;
-
-				//for the index 6
-				m_pChildren[6].m_v3Position.x -= fNewSize;
-				m_pChildren[6].m_v3Position.y -= fNewSize;
-				m_pChildren[6].m_v3Position.z -= fNewSize;
-
-				//for the index 7
-				m_pChildren[7].m_v3Position.x += fNewSize;
-				m_pChildren[7].m_v3Position.y -= fNewSize;
-				m_pChildren[7].m_v3Position.z -= fNewSize;
-			}
+			m_pChildren[n].Display();
 		}
-	//}
-
-	// Run once to set default - Commented because unsure of why it's needed
-	/*
-	//if (once == true) {
-	//	m_nChildCount = 8;
-	//	int newSubCount = subCount - 1;
-	//	for (uint index = 0; index < 8; index++)
-	//	{
-	//		m_pChildren[index].m_fSize = fNewSize;
-	//		m_pChildren[index].m_v3Position = m_v3Position;
-	//		m_pChildren[index].subCount = newSubCount;
-	//	}
-	//	fNewSize /= 2.0f;
-
-	//	//for the index 0
-	//	m_pChildren[0].m_v3Position.x += fNewSize;
-	//	m_pChildren[0].m_v3Position.y += fNewSize;
-	//	m_pChildren[0].m_v3Position.z += fNewSize;
-
-	//	//for the index 1
-	//	m_pChildren[1].m_v3Position.x -= fNewSize;
-	//	m_pChildren[1].m_v3Position.y += fNewSize;
-	//	m_pChildren[1].m_v3Position.z += fNewSize;
-
-	//	//for the index 2
-	//	m_pChildren[2].m_v3Position.x -= fNewSize;
-	//	m_pChildren[2].m_v3Position.y -= fNewSize;
-	//	m_pChildren[2].m_v3Position.z += fNewSize;
-
-	//	//for the index 3
-	//	m_pChildren[3].m_v3Position.x += fNewSize;
-	//	m_pChildren[3].m_v3Position.y -= fNewSize;
-	//	m_pChildren[3].m_v3Position.z += fNewSize;
-
-	//	//for the index 4
-	//	m_pChildren[4].m_v3Position.x += fNewSize;
-	//	m_pChildren[4].m_v3Position.y += fNewSize;
-	//	m_pChildren[4].m_v3Position.z -= fNewSize;
-
-	//	//for the index 5
-	//	m_pChildren[5].m_v3Position.x -= fNewSize;
-	//	m_pChildren[5].m_v3Position.y += fNewSize;
-	//	m_pChildren[5].m_v3Position.z -= fNewSize;
-
-	//	//for the index 6
-	//	m_pChildren[6].m_v3Position.x -= fNewSize;
-	//	m_pChildren[6].m_v3Position.y -= fNewSize;
-	//	m_pChildren[6].m_v3Position.z -= fNewSize;
-
-	//	//for the index 7
-	//	m_pChildren[7].m_v3Position.x += fNewSize;
-	//	m_pChildren[7].m_v3Position.y -= fNewSize;
-	//	m_pChildren[7].m_v3Position.z -= fNewSize;
-
-	//	once = false;
-	//}
-	*/
-	for (int i = 0; i < numChild; i++) {
-		Subdivide(numChild - 1);
-		isSubdivide = false;
-	}
-}//garbage
-
-//for (int i = 0; i < 8; i++) {
-//		if (m_pOctreeHead->GetSubCount() > 0) {
-//		if (m_pOctreeHead->m_pChildren[i].GetTooManyObjects(i) > 3) {
-//			//	m_pChildren[index].Subdivide();
-//			m_pOctreeHead->m_pChildren[i].SetTooManyObjects(i, 0);
-//		}
-//		else {
-//		m_pOctreeHead->m_pChildren[i].Subdivide();
-//		}
-//		}
-//
-//}
+		m_pMeshMngr->AddCubeToRenderList(glm::translate(m_v3Position) * glm::scale(vector3(m_fSize)), REWHITE, WIRE);
+		//used to check min and max of boxes
+		/*m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x - m_fSize/2, m_v3Position.y - m_fSize/2, m_v3Position.z - m_fSize/2)) * glm::scale(vector3(.5)), RERED, SOLID);
+		m_pMeshMngr->AddCubeToRenderList(glm::translate(vector3(m_v3Position.x + m_fSize / 2, m_v3Position.y + m_fSize / 2, m_v3Position.z + m_fSize / 2)) * glm::scale(vector3(.5)), REGREEN, SOLID);*/
+}
 
 
 void MyOctant::MakeChildrenPrime(int numChild) //Make the prime children, the first real 
@@ -293,25 +151,6 @@ void MyOctant::MakeChildrenPrime(int numChild) //Make the prime children, the fi
 	//this->CheckSub(m_pChildren[1]);
 
 
-	
-	//for (int i = 0; i < m_pBOMngr->GetObjectCount(); i++) {
-	//	vector3 v3MaxObj = m_pBOMngr->GetBoundingObject(i)->GetMaxG();
-	//	vector3 v3MinObj = m_pBOMngr->GetBoundingObject(i)->GetMinG();
-
-	//	// Perform a size check with the octree boxes
-	//	vector3 sizeObj = vector3(
-	//		v3MaxObj.x - v3MaxObj.x, v3
-	//		)
-
-	//}
-	//
-
-
-
-	/*
-	- Going to work on a different way of detecting objects inside of octree boxes
-	*/
-
 	for (uint q = 0; q < m_nChildCount; q++) 
 	{
 		m_pChildren[q].isSubdivide = false;
@@ -352,16 +191,36 @@ void MyOctant::MakeChildrenPrime(int numChild) //Make the prime children, the fi
 				m_pChildren[q].tooManyObjects++;
 			}
 
-			if (m_pChildren[q].tooManyObjects > 2) {//set the number of things that can inhabit a child before subdivide
+			if (m_pChildren[q].tooManyObjects > 1) {//set the number of things that can inhabit a child before subdivide
 				m_pChildren[q].tooManyObjects = 0;
 				m_pChildren[q].isSubdivide = true;
+				
+				
+			}
+			
+		}
+
+		if (m_pChildren[q].isSubdivide)//recursion and limits the number of subdivisons 
+		{
+			// If SubCount is less than 5
+			if (subCount < 5) {
+				//Increment Subcount by 1;
+				subCount++;
+				for (int i = 0; i < numChild; i++) {
+					m_pChildren[q].MakeChildrenPrime(numChild - 1);
+
+				}
+
+				if (subCount > 5) {
+					subCount = 0;
+				}
+			}
+			else
+			{
+				m_pChildren[q].MakeChildrenPrime(0);
 			}
 
-			if (m_pChildren[q].isSubdivide )//recursion adn limits the number of subdivisons 
-			{
-				int temp = numChild - 1;
-				m_pChildren[q].MakeChildrenPrime(temp);
-			}
+
 		}
 	}
 }
@@ -425,7 +284,17 @@ void MyOctant::ReleaseChildren(void)
 int MyOctant::GetSubCount() {
 	return subCount;
 }
-//Accessors
+// Accessors
+bool MyOctant::GetIsDisplayOctrees() {
+	return isDisplayOctrees;
+}
+
+// Mutators
+void MyOctant::SetIsDisplayOctrees(bool displayed ) {
+	isDisplayOctrees = displayed;
+}
 
 //--- Non Standard Singleton Methods
+
+
 

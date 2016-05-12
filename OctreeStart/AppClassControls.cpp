@@ -41,6 +41,54 @@ void AppClass::ProcessKeyboard(void)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 		m_pCameraMngr->MoveVertical(fSpeed);
+
+
+	// Controls to disable and enable the collision checks and display the collision boxes
+	static bool	bLastK = false, bLastH = false, bLastJ = false, bLastG = false;
+
+	ON_KEY_PRESS_RELEASE(K, NULL,
+		// Switch between Brute force or SAT
+		if (m_pBOMngr->GetCollisionSwitch()) {
+			m_pBOMngr->SetCollisionSwitch(false);
+		}
+		else{
+			m_pBOMngr->SetCollisionSwitch(true);
+		}
+	);
+	
+
+	ON_KEY_PRESS_RELEASE(H, NULL,
+			// Disable/Enable Octrees
+			if (m_pOctreeHead->GetIsDisplayOctrees()) {
+				m_pOctreeHead->SetIsDisplayOctrees(false);
+			}
+			else {
+				m_pOctreeHead->SetIsDisplayOctrees(true);
+			}
+		);
+
+	ON_KEY_PRESS_RELEASE(G, NULL,
+			if (displayGeometry) {
+				displayGeometry = false;
+			}
+			else{
+				displayGeometry = true;
+			}
+		);
+
+	ON_KEY_PRESS_RELEASE(J, NULL,
+			if (m_pBOMngr->GetSphereCheck()) {
+				m_pBOMngr->SetSphereCheck(false);
+			}
+			else {
+				m_pBOMngr->SetSphereCheck(true);
+			}
+		);
+
+
+
+	
+
 #pragma endregion
 
 #pragma region Other Actions

@@ -37,13 +37,12 @@ void AppClass::InitVariables(void)
 
 	m_pOctreeHead = new MyOctant();
 
-	if (creeps > 1)		//Check to see if subdivisions are neccessary
+	//Check to see if subdivisions are neccessary
+	if (creeps > 1) {	
 		m_pOctreeHead->MakeChildrenPrime(8);
+	}
 
-	
-
-	
-	
+	displayGeometry = true;
 	
 }
 
@@ -61,16 +60,46 @@ void AppClass::Update(void)
 
 	//Call the arcball method
 	ArcBall();
-	
+
 	//Set the model matrix for the first model to be the arcball
 	//m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
-	
+
 	//Adds all loaded instance to the render list
 	//m_pMeshMngr->AddSkyboxToRenderList("Skybox_01.png");
-	m_pMeshMngr->AddInstanceToRenderList("ALL");
 
-	m_pOctreeHead->Display();
+
+	if (m_pBOMngr->GetSphereCheck()) {
+		m_pBOMngr->Update();
+
+		for (int i = 0; i < creeps; i++) {
+		if (m_pBOMngr->GetBoundingObject(i)->GetIsSphereDisplayed()) {
+			String sName = "Creeper" + std::to_string(i);
+			m_pBOMngr->DisplaySphere(sName, RERED);
+		}
+	}
+	}
+
+	if (displayGeometry) {
+		m_pMeshMngr->AddInstanceToRenderList("ALL");
+	}
+	else
+	{
+		m_pMeshMngr->ResetRenderList();
+	}
+
+
+	//Check to see if subdivisions are neccessary
+	if (creeps > 1) {
+		m_pOctreeHead->MakeChildrenPrime(8);
+
+	}
+
+	if (m_pOctreeHead->GetIsDisplayOctrees()) {
+		m_pOctreeHead->Display();
+	}
+
 	
+
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
@@ -81,21 +110,59 @@ void AppClass::Update(void)
 
 	m_pMeshMngr->Print("Selection: ");
 	m_pMeshMngr->PrintLine(m_pMeshMngr->GetInstanceGroupName(m_selection.first, m_selection.second), REYELLOW);
-	
+
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
 
-	m_pMeshMngr->Print("<K> Check Collisions");
-	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+	// If true then enable SAT
+	m_pMeshMngr->Print("<K> Check Collisions: ");
+	if (m_pBOMngr->GetCollisionSwitch()) {
+		m_pMeshMngr->PrintLine("Spatial Optimization", REGREEN);
+	}
+	else {
+		m_pMeshMngr->PrintLine("Brute Force", RERED);
+	}
 
-	m_pMeshMngr->Print("<H> Display Octree");
-	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+	// If true then octrees are drawn
+	m_pMeshMngr->Print("<H> Display Octree: ");
+	if (m_pOctreeHead->GetIsDisplayOctrees()) {
+		m_pMeshMngr->PrintLine("ON", REGREEN);
+	}
+	else {
+		m_pMeshMngr->PrintLine("OFF", RERED);
+	}
 
-	m_pMeshMngr->Print("<J> Display Collisions");
-	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+	
+	//// If true then show collisions
+	//m_pMeshMngr->Print("<J> Display Collisions: ");
+	//for (int i = 0; i < creeps; i++) {
+	//	if (m_pBOMngr->GetBoundingObject(i)->GetIsSphereDisplayed()) {
+	//		showCollisions = true;
+	//	}
+	//	else {
+	//		showCollisions = false;
+	//	}
+	//}
 
-	m_pMeshMngr->Print("<G> Display Geometry");
-	m_pMeshMngr->PrintLine(std::to_string(nFPS), RERED);
+	m_pMeshMngr->Print("<J> Display Collisions: ");
+	if (m_pBOMngr->GetSphereCheck()) {
+		m_pMeshMngr->PrintLine("ON", REGREEN);
+	}
+	else
+	{
+		m_pMeshMngr->PrintLine("OFF", RERED);
+	}
+
+	m_pMeshMngr->Print("<G> Display Geometry: ");
+	if (displayGeometry) {
+		m_pMeshMngr->PrintLine("ON", REGREEN);
+	}
+	else {
+		m_pMeshMngr->PrintLine("OFF", RERED);
+	}
+
+	m_pMeshMngr->Print("Number of Blocks: ");
+	m_pMeshMngr->PrintLine(std::to_string(creeps), REBLUE);
 }
 
 void AppClass::Display(void)
@@ -104,9 +171,11 @@ void AppClass::Display(void)
 	ClearScreen();
 	//Render the grid based on the camera's mode:
 	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
-	m_pMeshMngr->Render(); //renders the render list
+		m_pMeshMngr->Render(); //renders the render list
+	
 	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
+	
 }
 
 void AppClass::Release(void)

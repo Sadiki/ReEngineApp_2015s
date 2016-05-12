@@ -20,6 +20,10 @@ class MyOctant
 	MyBOManager* m_pBOMngr = nullptr;
 
 	bool isSubdivide = false;
+
+	bool isDisplayOctrees = false;
+
+
 	
 	
 public:
@@ -76,6 +80,9 @@ public:
 	bool once;
 	void SetTooManyObjects(int, int);
 	int GetTooManyObjects(int);
+
+	void SetIsDisplayOctrees(bool);
+	bool GetIsDisplayOctrees();
 
 private:
 	/*

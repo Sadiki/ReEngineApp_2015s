@@ -21,6 +21,9 @@ class AppClass : public ReEngAppClass
 
 	uint creeps = 0; //keep track of how many creepers are spawned in the scene
 
+	bool displayGeometry = true;
+	bool showCollisions = false;
+
 public:
 	typedef ReEngAppClass super;
 

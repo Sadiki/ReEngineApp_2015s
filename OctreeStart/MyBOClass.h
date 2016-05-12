@@ -27,8 +27,7 @@ class MyBOClass
 
 	matrix4 m_m4ToWorld = IDENTITY_M4; //Matrix that will take us from local to world coordinate
 
-	bool switchCheck = false;
-
+	bool isSphereDisplayed;
 public:
 	/*
 	USAGE: Constructor
@@ -167,10 +166,9 @@ public:
 	*/
 	void DisplayReAlligned(vector3 a_v3Color = REDEFAULT);
 
-	void SetCollisionSwitch(bool change);
+	void SetIsSphereDisplayed(bool);
 
-	bool GetCollisionSwitch();
-
+	bool GetIsSphereDisplayed();
 private:
 	/*
 	USAGE: Deallocates member fields

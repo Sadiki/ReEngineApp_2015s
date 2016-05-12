@@ -193,7 +193,7 @@ vector3 MyBOClass::GetMaxG(void) { return m_v3MaxG; }
 //--- Non Standard Singleton Methods
 void MyBOClass::DisplaySphere(vector3 a_v3Color)
 {
-	m_pMeshMngr->AddSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) *
+		m_pMeshMngr->AddSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) *
 		glm::scale(vector3(m_fRadius * 2.0f)), a_v3Color, WIRE);
 }
 
@@ -338,11 +338,10 @@ bool MyBOClass::IsColliding(MyBOClass* const a_pOther)
 	return SAT(this , a_pOther);
 }
 
-// Set the boolean that determines which collision check we are performing.
-void MyBOClass::SetCollisionSwitch(bool change) {
-	switchCheck = change;
+void MyBOClass::SetIsSphereDisplayed(bool displayed) {
+	isSphereDisplayed = displayed;
 }
 
-bool MyBOClass::GetCollisionSwitch() {
-	return switchCheck;
+bool MyBOClass::GetIsSphereDisplayed() {
+	return isSphereDisplayed;
 }

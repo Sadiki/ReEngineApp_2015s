@@ -17,6 +17,8 @@ class MyBOManager
 	std::vector<std::vector<int>> m_llCollidingIndices; //List of list of colliding indices.
 	std::map<String, uint> m_mapIndex;//Map relating the mesh and the index
 
+	bool switchCheck = false;
+	bool sphereCheck = false;
 public:
 	int GetObjectCount(void);
 	/*
@@ -157,6 +159,13 @@ public:
 	*/
 	void Update(void);
 
+	void SetCollisionSwitch(bool change);
+
+	bool GetCollisionSwitch();
+
+	void SetSphereCheck(bool change);
+
+	bool GetSphereCheck();
 private:
 	/*
 	USAGE: instantiates the object
